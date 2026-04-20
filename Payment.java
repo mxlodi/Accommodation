@@ -1,5 +1,4 @@
 import java.time.LocalDateTime;
-
 public class Payment {
     // ATTRIBUTES only
     int paymentId;
