@@ -1,4 +1,4 @@
-// ENUM: special data type for fixed values
+package models;
 public enum BookingStatus {
     CONFIRMED, CHECKED_IN, CHECKED_OUT, CANCELLED, REFUNDED
 }
