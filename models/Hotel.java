@@ -1,4 +1,5 @@
 package models;
+
 public class Hotel {
     private int hotelId;
     private String name;
@@ -27,34 +28,38 @@ public class Hotel {
     public boolean isHasPool() { return hasPool; }
 
     public void setName(String name) {
-        if (name != null && !name.isEmpty()) {
-            this.name = name;
-        } else {
+        if (name == null || name.isEmpty()) {
+            System.out.println("Hotel name cannot be empty. Using default name.");
             this.name = "Unknown Hotel";
+        } else {
+            this.name = name;
         }
     }
 
     public void setPricePerNight(double pricePerNight) {
-        if (pricePerNight >= 0) {
-            this.pricePerNight = pricePerNight;
-        } else {
+        if (pricePerNight < 0) {
+            System.out.println("Price cannot be negative. Setting to default $100.");
             this.pricePerNight = 100.0;
+        } else {
+            this.pricePerNight = pricePerNight;
         }
     }
 
     public void setCapacity(int capacity) {
-        if (capacity > 0) {
-            this.capacity = capacity;
-        } else {
+        if (capacity <= 0) {
+            System.out.println("Capacity must be at least 1. Setting to 1.");
             this.capacity = 1;
+        } else {
+            this.capacity = capacity;
         }
     }
 
     public void setStars(int stars) {
-        if (stars >= 1 && stars <= 5) {
-            this.stars = stars;
-        } else {
+        if (stars < 1 || stars > 5) {
+            System.out.println("Stars must be between 1 and 5. Setting to default 3 stars.");
             this.stars = 3;
+        } else {
+            this.stars = stars;
         }
     }
 

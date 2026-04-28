@@ -1,4 +1,5 @@
 package models;
+
 public class GuestHouse {
     private int guestHouseId;
     private String name;
@@ -24,26 +25,29 @@ public class GuestHouse {
     public boolean isHasElevator() { return hasElevator; }
 
     public void setName(String name) {
-        if (name != null && !name.isEmpty()) {
-            this.name = name;
-        } else {
+        if (name == null || name.isEmpty()) {
+            System.out.println("Guest house name cannot be empty. Using default name.");
             this.name = "Unknown Guest House";
-        }
-    }
-
-    public void setCapacity(int capacity) {
-        if (capacity > 0) {
-            this.capacity = capacity;
         } else {
-            this.capacity = 1;
+            this.name = name;
         }
     }
 
     public void setPricePerNight(double pricePerNight) {
-        if (pricePerNight >= 0) {
-            this.pricePerNight = pricePerNight;
-        } else {
+        if (pricePerNight < 0) {
+            System.out.println("Price cannot be negative. Setting to default $30.");
             this.pricePerNight = 30.0;
+        } else {
+            this.pricePerNight = pricePerNight;
+        }
+    }
+
+    public void setCapacity(int capacity) {
+        if (capacity <= 0) {
+            System.out.println("Capacity must be at least 1. Setting to 1.");
+            this.capacity = 1;
+        } else {
+            this.capacity = capacity;
         }
     }
 

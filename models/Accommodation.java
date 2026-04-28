@@ -1,4 +1,5 @@
 package models;
+
 public class Accommodation {
     private int accId;
     private String name;
@@ -18,26 +19,29 @@ public class Accommodation {
     public int getCapacity() { return capacity; }
 
     public void setName(String name) {
-        if (name != null && !name.isEmpty()) {
-            this.name = name;
-        } else {
+        if (name == null || name.isEmpty()) {
+            System.out.println("Name cannot be empty. Using default name.");
             this.name = "Unknown Accommodation";
+        } else {
+            this.name = name;
         }
     }
 
     public void setPricePerNight(double pricePerNight) {
-        if (pricePerNight >= 0) {
-            this.pricePerNight = pricePerNight;
-        } else {
+        if (pricePerNight < 0) {
+            System.out.println("Price cannot be negative. Setting to 0.");
             this.pricePerNight = 0.0;
+        } else {
+            this.pricePerNight = pricePerNight;
         }
     }
 
     public void setCapacity(int capacity) {
-        if (capacity > 0) {
-            this.capacity = capacity;
-        } else {
+        if (capacity <= 0) {
+            System.out.println("Capacity must be at least 1. Setting to 1.");
             this.capacity = 1;
+        } else {
+            this.capacity = capacity;
         }
     }
 }
