@@ -1,4 +1,5 @@
 package models;
+
 public class User {
     private int userId;
     private String name;
@@ -21,6 +22,7 @@ public class User {
         if (name != null && !name.isEmpty()) {
             this.name = name;
         } else {
+            System.out.println("[WARNING] User name cannot be empty. Using 'Unknown User'");
             this.name = "Unknown User";
         }
     }
@@ -29,6 +31,7 @@ public class User {
         if (email != null && email.contains("@")) {
             this.email = email;
         } else {
+            System.out.println("[WARNING] Invalid email format: '" + email + "'. Using default@example.com");
             this.email = "default@example.com";
         }
     }
@@ -37,6 +40,7 @@ public class User {
         if (phone != null && !phone.isEmpty()) {
             this.phone = phone;
         } else {
+            System.out.println("[WARNING] Phone number cannot be empty. Using 000-000-0000");
             this.phone = "000-000-0000";
         }
     }

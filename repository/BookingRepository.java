@@ -11,7 +11,7 @@ import java.util.List;
 
 public class BookingRepository {
 
-    // --- STATIC COUNTER (Week 3 requirement) ---
+    // --- STATIC COUNTER DECLARATION ---
     // Belongs to the class, not any single object.
     // Tracks total bookings ever attempted across the whole system.
     private static int totalBookingsCreated = 0;
@@ -27,7 +27,7 @@ public class BookingRepository {
     private List<GuestHouse> guestHouses = new ArrayList<>();
     private List<Apartment> apartments = new ArrayList<>();
 
-    // PRIVATE INNER CLASS (Week 3 requirement)
+    // PRIVATE INNER CLASS DECLARATION
     private class DataValidator {
 
         public boolean isValidEmail(String email) {
