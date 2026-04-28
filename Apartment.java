@@ -19,6 +19,8 @@ public class Apartment {
         this.hasBreakfast = hasBreakfast;
     }
 
+    //testing git
+
     public int getApartmentId() {
         return apartmentId;
     }
