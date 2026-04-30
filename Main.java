@@ -9,16 +9,17 @@ import repository.BookingRepository;
 
 public class Main {
     public static void main(String[] args) {
-
+        System.out.println("\n");
+        System.out.println("~".repeat(  90));
         System.out.println("  WEEK 4: ACCOMMODATION BOOKING SYSTEM");
         System.out.println("  Object Relationships | Association | Composition");
-        System.out.println("-".repeat(90));
+        System.out.println("~".repeat(90));
 
         BookingRepository repo = new BookingRepository();
 
         // CREATE USERS -------------
-        System.out.println("\nSTEP 1: Creating Users...");
-        System.out.println("-".repeat(80));
+        System.out.println("\nSTEP 1: CREATING USERS");
+        System.out.println("-".repeat(90));
 
         User user1 = new User(1, "Teddy Bear", "teddy@email.com", "012345678");
         User user2 = new User(2, "Winnie Pooh", "winnie@disney.com", "098765432");
@@ -29,8 +30,8 @@ public class Main {
         repo.addUser(user3);
 
         // CREATE ACCOMMODATIONS -------------
-        System.out.println("\nSTEP 2: Creating Accommodations...");
-        System.out.println("-".repeat(80));
+        System.out.println("\nSTEP 2: CREATING ACCOMMODATIONS");
+        System.out.println("-".repeat(90));
 
         Hotel hotel1 = new Hotel(101, "Grand Plaza Hotel", 250.00, 2, 5, true, true);
         Hotel hotel2 = new Hotel(102, "Sunset Beach Resort", 180.00, 4, 4, true, false);
@@ -43,8 +44,8 @@ public class Main {
         repo.addApartment(apt1);
 
         // CREATE BOOKINGS -------------
-        System.out.println("\nSTEP 3: Creating Bookings...");
-        System.out.println("-".repeat(80));
+        System.out.println("\nSTEP 3: CREATING BOOKINGS");
+        System.out.println("-".repeat(90));
 
         // Booking 1: Teddy books Grand Plaza Hotel for 5 nights
         Booking booking1 = new Booking(1001, user1, hotel1,
@@ -62,11 +63,12 @@ public class Main {
         repo.addBooking(booking3);
 
         // TEST AVAILABILITY CHECK -------------
-        System.out.println("\nSTEP 4: Testing Availability Check...");
-        System.out.println("-".repeat(80));
+        System.out.println("\nSTEP 4: TESTING AVAILABILITY CHECK");
+        System.out.println("-".repeat(90));
 
         boolean available = repo.isAvailable(101, "2026-05-12", "2026-05-14");
-        System.out.println("  Is Grand Plaza Hotel available May 12-14? " + (available ? "YES" : "NO (already booked)"));
+        System.out
+                .println("  Is Grand Plaza Hotel available May 12-14? " + (available ? "YES" : "NO (already booked)"));
 
         available = repo.isAvailable(101, "2026-05-20", "2026-05-25");
         System.out.println("  Is Grand Plaza Hotel available May 20-25? " + (available ? "YES" : "NO"));
@@ -75,19 +77,19 @@ public class Main {
         System.out.println("\n  Attempting double-booking (should be rejected):");
         Booking overlapping = new Booking(1004, user2, hotel1,
                 "2026-05-12", "2026-05-14", BookingStatus.CONFIRMED);
-        repo.addBooking(overlapping); //failed
+        repo.addBooking(overlapping); // failed
 
         // UPDATE BOOKING STATUS -------------
-        System.out.println("\nSTEP 5: Updating Booking Status...");
-        System.out.println("-".repeat(80));
+        System.out.println("\nSTEP 5: UPDATING BOOKING STATUSES");
+        System.out.println("-".repeat(90));
 
         repo.updateBookingStatus(1001, BookingStatus.CHECKED_IN);
         repo.updateBookingStatus(1002, BookingStatus.CANCELLED);
         repo.updateBookingStatus(1003, BookingStatus.CHECKED_OUT);
 
         // CREATE PAYMENTS -------------
-        System.out.println("\nSTEP 6: Creating Payments...");
-        System.out.println("-".repeat(80));
+        System.out.println("\nSTEP 6: CREATING PAYMENTS");
+        System.out.println("-".repeat(90));
 
         Payment pay1 = new Payment(5001, booking1, "CARD");
         Payment pay2 = new Payment(5002, booking3, "ONLINE");
@@ -95,9 +97,22 @@ public class Main {
         repo.addPayment(pay1);
         repo.addPayment(pay2);
 
+        // DEMO USER HISTORY -------------
+        System.out.println("\nSTEP 7: USER HISTORY DEMO...");
+        System.out.println("-".repeat(90));
+
+        System.out.println("\n  Teddy Bear's Complete Booking History:");
+        for (Booking b : repo.getUserHistory(1)) {
+            System.out.println("    #" + b.getBookingId()
+                    + " | " + b.getAccommodation().getName()
+                    + " | " + b.getCheckInDate() + " to " + b.getCheckOutDate()
+                    + " | " + b.getStatus()
+                    + " | $" + String.format("%.2f", b.getTotalPrice()));
+        }
+
         // DEMO DELETE METHODS -------------
-        System.out.println("\nSTEP 8: Delete Methods Demo...");
-        System.out.println("-".repeat(80));
+        System.out.println("\nSTEP 8: HARD DELETE DEMO...");
+        System.out.println("-".repeat(90));
 
         System.out.println("\n  BEFORE any delete:");
         System.out.println("    totalBookingsCreated = " + BookingRepository.getTotalBookingsCreated());
@@ -120,29 +135,19 @@ public class Main {
                     + " | Status: " + b.getStatus());
         }
 
-        // DEMO USER HISTORY -------------
-        System.out.println("\nSTEP 7: User Complete History Demo...");
-        System.out.println("-".repeat(80));
-
-        System.out.println("\n  Teddy Bear's Complete Booking History:");
-        for (Booking b : repo.getUserHistory(1)) {
-            System.out.println("    #" + b.getBookingId()
-                    + " | " + b.getAccommodation().getName()
-                    + " | " + b.getCheckInDate() + " to " + b.getCheckOutDate()
-                    + " | " + b.getStatus()
-                    + " | $" + String.format("%.2f", b.getTotalPrice()));
-        }
-
         // DISPLAY ALL DATA -------------
         repo.displayAllData();
 
         // STATIC USAGE DEMO -------------
-        System.out.println("\n" + "=".repeat(60));
+        System.out.println("\n" + "~".repeat(90));
         System.out.println("STATIC USAGE DEMO");
-        System.out.println("=".repeat(60));
+        System.out.println("~".repeat(90));
 
-        System.out.println("\n  BookingRepository.getTotalBookingsCreated() = " + BookingRepository.getTotalBookingsCreated());
+        System.out.println(
+                "\n  BookingRepository.getTotalBookingsCreated() = " + BookingRepository.getTotalBookingsCreated());
         System.out.println("  This counts ALL bookings EVER created (including cancelled)");
         System.out.println("  Cancelled bookings are preserved in allBookings for history!");
     }
 }
+
+

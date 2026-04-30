@@ -201,7 +201,7 @@ public class BookingRepository {
         return result;
     }
 
-    // 4. getUserHistory(userId) - User's complete history (ALL their bookings)
+    // 4. getUserHistory(userId) - User's complete history (all their bookings)
     public List<Booking> getUserHistory(int userId) {
         List<Booking> history = new ArrayList<>();
         for (Booking b : allBookings.values()) {
@@ -254,27 +254,27 @@ public class BookingRepository {
 
     // DISPLAY METHODS -------------
     public void displayAllData() {
-        System.out.println("\n" + "-".repeat(90));
+        System.out.println("\n" + "~".repeat(90));
         System.out.println("SYSTEM DATA OVERVIEW");
-        System.out.println("-".repeat(90));
+        System.out.println("~".repeat(90));
 
         // USERS
         System.out.println("\n[USERS] Total: " + users.size());
-        System.out.println("-".repeat(70));
+        System.out.println("-".repeat(90));
         for (User u : users) {
             System.out.println("  ID:" + u.getUserId() + " | " + u.getName());
         }
 
         // ACCOMMODATIONS
         System.out.println("\n[ACCOMMODATIONS] Total: " + accommodations.size());
-        System.out.println("-".repeat(70));
+        System.out.println("-".repeat(90));
         for (Accommodation a : accommodations) {
             System.out.println("  ID:" + a.getAccId() + " | " + a.getSummary());
         }
 
         // 1. getAllBookings() - EVERYTHING (complete history)
         System.out.println("\n[1. getAllBookings() - COMPLETE HISTORY] Total: " + allBookings.size());
-        System.out.println("-".repeat(70));
+        System.out.println("-".repeat(90));
         for (Booking b : getAllBookings()) {
             String icon;
             switch (b.getStatus()) {
@@ -307,7 +307,7 @@ public class BookingRepository {
         // 2 & 3. getBookingsByStatus() examples
         System.out.println("\n[2. getBookingsByStatus(CONFIRMED) - Upcoming Stays] Total: "
                 + getBookingsByStatus(BookingStatus.CONFIRMED).size());
-        System.out.println("-".repeat(70));
+        System.out.println("-".repeat(90));
         for (Booking b : getBookingsByStatus(BookingStatus.CONFIRMED)) {
             System.out.println(
                     "   #" + b.getBookingId() + " | " + b.getUser().getName() + " | " + b.getAccommodation().getName());
@@ -315,7 +315,7 @@ public class BookingRepository {
 
         System.out.println("\n[3. getBookingsByStatus(CHECKED_IN) - Current Guests] Total: "
                 + getBookingsByStatus(BookingStatus.CHECKED_IN).size());
-        System.out.println("-".repeat(70));
+        System.out.println("-".repeat(90));
         for (Booking b : getBookingsByStatus(BookingStatus.CHECKED_IN)) {
             System.out.println("    #" + b.getBookingId() + " | " + b.getUser().getName() + " | "
                     + b.getAccommodation().getName());
@@ -323,7 +323,7 @@ public class BookingRepository {
 
         // 4. getUserHistory() examples
         System.out.println("\n[4. getUserHistory() - Complete User History]");
-        System.out.println("-".repeat(70));
+        System.out.println("-".repeat(90));
         for (User u : users) {
             System.out.println("\n  User: " + u.getName() + " (ID: " + u.getUserId() + ")");
             List<Booking> history = getUserHistory(u.getUserId());
@@ -340,7 +340,7 @@ public class BookingRepository {
 
         // 5. isAvailable() demo
         System.out.println("\n[5. isAvailable() - Availability Check Demo]");
-        System.out.println("-".repeat(70));
+        System.out.println("-".repeat(90));
         if (accommodations.size() > 0) {
             int testId = accommodations.get(0).getAccId();
             String testDates = "2026-12-01 to 2026-12-05";
@@ -351,7 +351,7 @@ public class BookingRepository {
 
         // PAYMENTS
         System.out.println("\n[PAYMENTS] Total: " + payments.size());
-        System.out.println("-".repeat(70));
+        System.out.println("-".repeat(90));
         for (Payment p : payments) {
             System.out.println("  Payment #" + p.getPaymentId()
                     + " | Booking #" + p.getBooking().getBookingId()
@@ -361,7 +361,7 @@ public class BookingRepository {
 
         // STATIC COUNTER
         System.out.println("\n[STATIC COUNTER]");
-        System.out.println("-".repeat(70));
+        System.out.println("-".repeat(90));
         System.out.println(
                 "  BookingRepository.getTotalBookingsCreated() = " + BookingRepository.getTotalBookingsCreated());
         System.out.println("  allBookings.size() (currently stored)       = " + allBookings.size());
