@@ -13,25 +13,36 @@ public class User {
         setPhone(phone);
     }
 
-    public int getUserId() { return userId; }
-    public String getName() { return name; }
-    public String getEmail() { return email; }
-    public String getPhone() { return phone; }
+    public int getUserId() {
+        return userId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
 
     public void setName(String name) {
         if (name != null && !name.isEmpty()) {
             this.name = name;
         } else {
-            System.out.println("[WARNING] User name cannot be empty. Using 'Unknown User'");
+            System.out.println("  [WARNING] User name cannot be empty. Using 'Unknown User'.");
             this.name = "Unknown User";
         }
     }
 
     public void setEmail(String email) {
-        if (email != null && email.contains("@")) {
+        if (email != null && email.contains("@") && email.contains(".")) {
             this.email = email;
         } else {
-            System.out.println("[WARNING] Invalid email format: '" + email + "'. Using default@example.com");
+            System.out.println("  [WARNING] Invalid email '" + email + "'. Using default@example.com");
             this.email = "default@example.com";
         }
     }
@@ -40,7 +51,7 @@ public class User {
         if (phone != null && !phone.isEmpty()) {
             this.phone = phone;
         } else {
-            System.out.println("[WARNING] Phone number cannot be empty. Using 000-000-0000");
+            System.out.println("  [WARNING] Phone cannot be empty. Using 000-000-0000");
             this.phone = "000-000-0000";
         }
     }

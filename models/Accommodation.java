@@ -1,5 +1,9 @@
 package models;
 
+// Accommodation holds only COMMON fields shared by Hotel, GuestHouse, Apartment
+// Hotel / GuestHouse / Apartment each hold ONLY their own special fields
+// Booking stores ONE Accommodation reference
+
 public class Accommodation {
     private int accId;
     private String name;
@@ -13,14 +17,25 @@ public class Accommodation {
         setCapacity(capacity);
     }
 
-    public int getAccId() { return accId; }
-    public String getName() { return name; }
-    public double getPricePerNight() { return pricePerNight; }
-    public int getCapacity() { return capacity; }
+    public int getAccId() {
+        return accId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public double getPricePerNight() {
+        return pricePerNight;
+    }
+
+    public int getCapacity() {
+        return capacity;
+    }
 
     public void setName(String name) {
         if (name == null || name.isEmpty()) {
-            System.out.println("Name cannot be empty. Using default name.");
+            System.out.println("  [WARNING] Accommodation name cannot be empty. Using default name.");
             this.name = "Unknown Accommodation";
         } else {
             this.name = name;
@@ -28,20 +43,25 @@ public class Accommodation {
     }
 
     public void setPricePerNight(double pricePerNight) {
-        if (pricePerNight < 0) {
-            System.out.println("Price cannot be negative. Setting to 0.");
-            this.pricePerNight = 0.0;
+        if (pricePerNight <= 0) {
+            System.out.println("  [WARNING] Price must be positive. Setting to default $50.");
+            this.pricePerNight = 50.0;
         } else {
             this.pricePerNight = pricePerNight;
         }
     }
 
     public void setCapacity(int capacity) {
-        if (capacity <= 0) {
-            System.out.println("Capacity must be at least 1. Setting to 1.");
+        if (capacity < 1) {
+            System.out.println("  [WARNING] Capacity must be at least 1. Setting to 1.");
             this.capacity = 1;
         } else {
             this.capacity = capacity;
         }
+    }
+
+    // Use for display extra detail
+    public String getSummary() {
+        return getName() + " | $" + getPricePerNight() + "/night | Capacity: " + getCapacity();
     }
 }
