@@ -1,17 +1,15 @@
 package models;
 
-// Booking connects BOTH User and Accommodation
-// totalPrice is CALCULATED from accommodation.pricePerNight × numberOfNights (not entered manually)
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 
 public class Booking {
 
     private int bookingId;
     private User user;
-    // Association: Booking knows its User
     private Accommodation accommodation;
-    // Association: Booking knows which place was booked
-    private String checkInDate;
-    private String checkOutDate;
+    private LocalDate checkInDate;
+    private LocalDate checkOutDate;
     private double totalPrice;
     private BookingStatus status;
     private String confirmedDate;
@@ -23,13 +21,19 @@ public class Booking {
         this.accommodation = accommodation;
         this.confirmedDate = java.time.LocalDate.now().toString();
 
+<<<<<<< HEAD
         setCheckInDate(checkInDate); // to save from invalid dates  
         setCheckOutDate(checkOutDate);
+=======
+        this.checkInDate = LocalDate.parse(checkInDate);
+        this.checkOutDate = LocalDate.parse(checkOutDate);
+
+>>>>>>> 3a96ac6dc0646f42c67ec27c2d1368d20f754daf
         setStatus(status);
         this.totalPrice = calculateTotalPrice();
     }
 
-    // ── Getters ───────────────────────────────────────────────────────────────
+    // Getters
     public int getBookingId() {
         return bookingId;
     }
@@ -43,11 +47,11 @@ public class Booking {
     }
 
     public String getCheckInDate() {
-        return checkInDate;
+        return checkInDate.toString();
     }
 
     public String getCheckOutDate() {
-        return checkOutDate;
+        return checkOutDate.toString();
     }
 
     public double getTotalPrice() {
@@ -62,31 +66,24 @@ public class Booking {
         return confirmedDate;
     }
 
-    // Keep getUserId() for backward-compatibility with BookingRepository display
     public User getUserId() {
         return user;
     }
 
-    // ── Setters ───────────────────────────────────────────────────────────────
-    public void setCheckInDate(String checkInDate) {
-        if (checkInDate == null || checkInDate.isEmpty()) {
+    // Setters
+    public void setCheckInDate(LocalDate checkInDate) {
+        if (checkInDate == null) {
             System.out.println("  [WARNING] Check-in date empty. Using default 2026-01-01.");
-            this.checkInDate = "2026-01-01";
-        } else if (!isValidDateFormat(checkInDate)) {
-            System.out.println("  [WARNING] Invalid date format '" + checkInDate + "'. Using default 2026-01-01.");
-            this.checkInDate = "2026-01-01";
+            this.checkInDate = LocalDate.parse("2026-01-01");
         } else {
             this.checkInDate = checkInDate;
         }
     }
 
-    public void setCheckOutDate(String checkOutDate) {
-        if (checkOutDate == null || checkOutDate.isEmpty()) {
+    public void setCheckOutDate(LocalDate checkOutDate) {
+        if (checkOutDate == null) {
             System.out.println("  [WARNING] Check-out date empty. Using default 2026-01-02.");
-            this.checkOutDate = "2026-01-02";
-        } else if (!isValidDateFormat(checkOutDate)) {
-            System.out.println("  [WARNING] Invalid date format '" + checkOutDate + "'. Using default 2026-01-02.");
-            this.checkOutDate = "2026-01-02";
+            this.checkOutDate = LocalDate.parse("2026-01-02");
         } else {
             this.checkOutDate = checkOutDate;
         }
@@ -101,39 +98,39 @@ public class Booking {
         }
     }
 
-    // ── BUSINESS LOGIC ────────────────────────────────────────────────────────
-
-    // Calculate number of nights between checkIn and checkOut (YYYY-MM-DD strings)
-    public int getNumberOfNights() {
-        if (checkInDate == null || checkOutDate == null)
-            return 0;
-        try {
-            // Parse YYYY-MM-DD without importing LocalDate to stay simple
-            String[] in = checkInDate.split("-");
-            String[] out = checkOutDate.split("-");
-            int inDays = Integer.parseInt(in[0]) * 365 + Integer.parseInt(in[1]) * 30 + Integer.parseInt(in[2]);
-            int outDays = Integer.parseInt(out[0]) * 365 + Integer.parseInt(out[1]) * 30 + Integer.parseInt(out[2]);
-            return Math.max(0, outDays - inDays);
-        } catch (Exception e) {
-            return 0;
+    // Status flow validation 
+    public boolean canChangeTo(BookingStatus newStatus) {
+        if (this.status == BookingStatus.CONFIRMED) {
+            if (newStatus == BookingStatus.CHECKED_IN || newStatus == BookingStatus.CANCELLED) {
+                return true;
+            } else {
+                return false;
+            }
+        } else if (this.status == BookingStatus.CHECKED_IN) {
+            if (newStatus == BookingStatus.CHECKED_OUT || newStatus == BookingStatus.CANCELLED) {
+                return true;
+            } else {
+                return false;
+            }
+        } else if (this.status == BookingStatus.CANCELLED) {
+            if (newStatus == BookingStatus.REFUNDED) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
         }
     }
 
-    // Calculates price
+    // Business Logic 
+    public int getNumberOfNights() {
+        if (checkInDate == null || checkOutDate == null) return 0;
+        return (int) ChronoUnit.DAYS.between(checkInDate, checkOutDate);
+    }
+
     private double calculateTotalPrice() {
-        if (accommodation == null)
-            return 0.0;
+        if (accommodation == null) return 0.0;
         return accommodation.getPricePerNight() * getNumberOfNights();
     }
-
-    // Date validation: must match YYYY-MM-DD and have valid ranges
-    private boolean isValidDateFormat(String date) {
-        if (date == null || !date.matches("\\d{4}-\\d{2}-\\d{2}"))
-            return false;
-        String[] parts = date.split("-");
-        int month = Integer.parseInt(parts[1]);
-        int day = Integer.parseInt(parts[2]);
-        return month >= 1 && month <= 12 && day >= 1 && day <= 31;
-    }
-
 }
