@@ -3,7 +3,7 @@ package models;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
-public class Booking {
+public class Booking implements StatusChangeable {
 
     private int bookingId;
     private User user;
@@ -21,14 +21,8 @@ public class Booking {
         this.accommodation = accommodation;
         this.confirmedDate = java.time.LocalDate.now().toString();
 
-<<<<<<< HEAD
-        setCheckInDate(checkInDate); // to save from invalid dates  
-        setCheckOutDate(checkOutDate);
-=======
-        this.checkInDate = LocalDate.parse(checkInDate);
-        this.checkOutDate = LocalDate.parse(checkOutDate);
-
->>>>>>> 3a96ac6dc0646f42c67ec27c2d1368d20f754daf
+        setCheckInDate(LocalDate.parse(checkInDate));
+        setCheckOutDate(LocalDate.parse(checkOutDate));
         setStatus(status);
         this.totalPrice = calculateTotalPrice();
     }
@@ -58,6 +52,7 @@ public class Booking {
         return totalPrice;
     }
 
+    @Override
     public BookingStatus getStatus() {
         return status;
     }
@@ -89,6 +84,7 @@ public class Booking {
         }
     }
 
+    @Override
     public void setStatus(BookingStatus status) {
         if (status == null) {
             System.out.println("  [WARNING] Status cannot be null. Setting to CANCELLED.");
@@ -99,6 +95,7 @@ public class Booking {
     }
 
     // Status flow validation 
+    @Override
     public boolean canChangeTo(BookingStatus newStatus) {
         if (this.status == BookingStatus.CONFIRMED) {
             if (newStatus == BookingStatus.CHECKED_IN || newStatus == BookingStatus.CANCELLED) {

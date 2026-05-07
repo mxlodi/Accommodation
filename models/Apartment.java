@@ -3,7 +3,7 @@ package models;
 // Apartment extends from Accommodation, adds ONLY apartment specific fields:
 // floor, hasElevator, hasBreakfast, hasPool
 
-public class Apartment extends Accommodation {
+public class Apartment extends Accommodation implements Displayable {
     private int floor;
     private boolean hasElevator;
     private boolean hasBreakfast;

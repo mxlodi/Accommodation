@@ -3,7 +3,7 @@ package models;
 // GuestHouse extends from Accommodation and adds only guest-house specific fields:
 // hasBreakfast, hasElevator
 
-public class GuestHouse extends Accommodation {
+public class GuestHouse extends Accommodation implements Displayable {
     private boolean hasBreakfast;
     private boolean hasElevator;
 

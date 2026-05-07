@@ -4,7 +4,7 @@ package models;
 // stars, hasBreakfast, hasPool
 // name, pricePerNight, capacity are handled by Accommodation
 
-public class Hotel extends Accommodation {
+public class Hotel extends Accommodation implements Displayable {
     private int stars;
     private boolean hasBreakfast;
     private boolean hasPool;

@@ -93,7 +93,7 @@ public class BookingRepository {
             return;
         }
         accommodations.add(hotel);
-        System.out.println("  [OK]    " + hotel.getSummary());
+        displayAddedAccommodation(hotel);
     }
 
     public void addGuestHouse(GuestHouse gh) {
@@ -102,7 +102,7 @@ public class BookingRepository {
             return;
         }
         accommodations.add(gh);
-        System.out.println("  [OK]    " + gh.getSummary());
+        displayAddedAccommodation(gh);
     }
 
     public void addApartment(Apartment apt) {
@@ -111,7 +111,12 @@ public class BookingRepository {
             return;
         }
         accommodations.add(apt);
-        System.out.println("  [OK]    " + apt.getSummary());
+        displayAddedAccommodation(apt);
+    }
+
+    private void displayAddedAccommodation(Displayable accommodation) {
+        System.out.print("  [OK]    ");
+        accommodation.display();
     }
 
     // BOOKING MANAGEMENT -------------
@@ -162,14 +167,15 @@ public class BookingRepository {
             System.out.println("  [ERROR] Booking #" + bookingId + " not found!");
             return;
         }
-        BookingStatus oldStatus = booking.getStatus();
-        if (!booking.canChangeTo(newStatus)) {
+        StatusChangeable statusChange = booking;
+        BookingStatus oldStatus = statusChange.getStatus();
+        if (!statusChange.canChangeTo(newStatus)) {
         System.out.println("  [ERROR] Cannot change booking #" + bookingId + 
                          " from " + oldStatus + " to " + newStatus);
         return;
     }
     
-    booking.setStatus(newStatus);
+    statusChange.setStatus(newStatus);
     System.out.println("  [OK]    Booking #" + bookingId + " status: " + oldStatus + " → " + newStatus);
 }
 
@@ -275,7 +281,12 @@ public class BookingRepository {
         System.out.println("\n[ACCOMMODATIONS] Total: " + accommodations.size());
         System.out.println("-".repeat(90));
         for (Accommodation a : accommodations) {
-            System.out.println("  ID:" + a.getAccId() + " | " + a.getSummary());
+            System.out.print("  ID:" + a.getAccId() + " | ");
+            if (a instanceof Displayable) {
+                ((Displayable) a).display();
+            } else {
+                System.out.println(a.getSummary());
+            }
         }
 
         // 1. getAllBookings() - EVERYTHING (complete history)
