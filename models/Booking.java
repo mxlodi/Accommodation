@@ -23,7 +23,7 @@ public class Booking {
         this.accommodation = accommodation;
         this.confirmedDate = java.time.LocalDate.now().toString();
 
-        setCheckInDate(checkInDate);
+        setCheckInDate(checkInDate); // to save from invalid dates  
         setCheckOutDate(checkOutDate);
         setStatus(status);
         this.totalPrice = calculateTotalPrice();
