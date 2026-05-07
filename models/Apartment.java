@@ -16,6 +16,7 @@ public class Apartment extends Accommodation {
         this.hasElevator = hasElevator;
         this.hasBreakfast = hasBreakfast;
         this.hasPool = false; // default
+        
     }
 
     public int getApartmentId() {

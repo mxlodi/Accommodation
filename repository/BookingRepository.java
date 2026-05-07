@@ -163,9 +163,15 @@ public class BookingRepository {
             return;
         }
         BookingStatus oldStatus = booking.getStatus();
-        booking.setStatus(newStatus);
-        System.out.println("  [OK]    Booking #" + bookingId + " status: " + oldStatus + " -> " + newStatus);
+        if (!booking.canChangeTo(newStatus)) {
+        System.out.println("  [ERROR] Cannot change booking #" + bookingId + 
+                         " from " + oldStatus + " to " + newStatus);
+        return;
     }
+    
+    booking.setStatus(newStatus);
+    System.out.println("  [OK]    Booking #" + bookingId + " status: " + oldStatus + " → " + newStatus);
+}
 
     // DELETE METHODS -------------
 
