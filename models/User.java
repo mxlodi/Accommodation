@@ -1,6 +1,8 @@
 package models;
 
-public class User {
+import interfaces.Displayable;
+
+public class User implements Displayable {
     private int userId;
     private String name;
     private String email;
@@ -54,5 +56,19 @@ public class User {
             System.out.println("  [WARNING] Phone cannot be empty. Using 000-000-0000");
             this.phone = "000-000-0000";
         }
+    }
+
+    @Override
+    public void display() {
+        System.out.println("=== USER DETAILS ===");
+        System.out.println("ID: " + userId);
+        System.out.println("Name: " + name);
+        System.out.println("Email: " + email);
+        System.out.println("Phone: " + phone);
+    }
+
+    @Override
+    public void displayName() {
+        System.out.println(name);
     }
 }

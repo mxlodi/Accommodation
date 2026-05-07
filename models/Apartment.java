@@ -1,9 +1,10 @@
 package models;
 
+
 // Apartment extends from Accommodation, adds ONLY apartment specific fields:
 // floor, hasElevator, hasBreakfast, hasPool
 
-public class Apartment extends Accommodation implements Displayable {
+public class Apartment extends Accommodation  {
     private int floor;
     private boolean hasElevator;
     private boolean hasBreakfast;
@@ -60,12 +61,18 @@ public class Apartment extends Accommodation implements Displayable {
         this.hasPool = hasPool;
     }
 
-    // @Override - replaces the getSummary() method from the parent Accommodation class
-    // We override because Apartment has extra information (floor number, elevator) to display
+     @Override
+    public String getType() { return "APARTMENT"; }
+
     @Override
-    public String getSummary() {
-        String elevator = hasElevator ? "Elevator" : "Stairs only";
-        return "[APARTMENT] " + getName() + " | Floor " + floor + " | $" + getPricePerNight()
-                + "/night | " + elevator;
+    public void display() {
+        System.out.println("=== APARTMENT DETAILS ===");
+        System.out.println("ID: " + getAccId());
+        System.out.println("Name: " + getName());
+        System.out.println("Floor: " + floor);
+        System.out.println("Price: $" + getPricePerNight() + "/night");
+        System.out.println("Capacity: " + getCapacity() + " persons");
+        System.out.println("Breakfast: " + (hasBreakfast ? "Yes" : "No"));
+        System.out.println("Elevator: " + (hasElevator ? "Yes" : "No"));
     }
 }

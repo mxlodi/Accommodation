@@ -5,149 +5,90 @@ import models.Apartment;
 import models.Booking;
 import models.BookingStatus;
 import models.Payment;
+import models.Accommodation;
 import repository.BookingRepository;
+import java.util.List;
 
 public class Main {
-    public static void main(String[] args) {
-        System.out.println("\n");
-        System.out.println("~".repeat(  90));
-        System.out.println("  WEEK 4: ACCOMMODATION BOOKING SYSTEM");
-        System.out.println("  Object Relationships | Association | Composition");
-        System.out.println("~".repeat(90));
 
-        BookingRepository repo = new BookingRepository();
+        public static void main(String[] args) {
+                BookingRepository repo = new BookingRepository();
 
-        // CREATE USERS -------------
-        System.out.println("\nSTEP 1: CREATING USERS");
-        System.out.println("-".repeat(90));
+                // 1. SETUP: Initialize system with users and rooms
+                setupInitialData(repo);
 
-        User user1 = new User(1, "Teddy Bear", "teddy@email.com", "012345678");
-        User user2 = new User(2, "Winnie Pooh", "winnie@disney.com", "098765432");
-        User user3 = new User(3, "Mickey Mouse", "mickey@disney.com", "011223344");
+                System.out.println("\n" + "=".repeat(70));
 
-        repo.addUser(user1);
-        repo.addUser(user2);
-        repo.addUser(user3);
+                // 2. SCENARIO A: First user searches for dates
+                String checkIn = "2026-10-01";
+                String checkOut = "2026-10-05";
 
-        // CREATE ACCOMMODATIONS -------------
-        System.out.println("\nSTEP 2: CREATING ACCOMMODATIONS");
-        System.out.println("-".repeat(90));
+                System.out.println("\n[USER A] Searching for rooms between " + checkIn + " and " + checkOut + "...");
+                browseAvailableRooms(repo, checkIn, checkOut);
 
-        Hotel hotel1 = new Hotel(101, "Grand Plaza Hotel", 250.00, 2, 5, true, true);
-        Hotel hotel2 = new Hotel(102, "Sunset Beach Resort", 180.00, 4, 4, true, false);
-        GuestHouse gh1 = new GuestHouse(201, "Cozy Corner Cottage", 85.00, 2, true, false);
-        Apartment apt1 = new Apartment(301, "Skyline Luxury Loft", 200.00, 4, 15, true, false);
+                // 3. ACTION: User A books "Hotel Plaza" (ID 10)
+                System.out.println("\nUser A (Teddy) is booking Hotel Plaza...");
 
-        repo.addHotel(hotel1);
-        repo.addHotel(hotel2);
-        repo.addGuestHouse(gh1);
-        repo.addApartment(apt1);
+                User teddy = repo.findUserById(1);
+                Accommodation plaza = repo.findAccommodationById(10);
+                Booking bookingA = new Booking(1001, teddy, plaza, checkIn, checkOut, BookingStatus.CONFIRMED);
+                repo.addBooking(bookingA);
 
-        // CREATE BOOKINGS -------------
-        System.out.println("\nSTEP 3: CREATING BOOKINGS");
-        System.out.println("-".repeat(90));
+                // 4. SCENARIO B: Second user searches for SAME dates
+                System.out.println("\n" + "-".repeat(70));
+                System.out.println("[USER B] Searching for same dates: " + checkIn + " to " + checkOut);
+                System.out.println("EXPECTED: Hotel Plaza should be HIDDEN.");
+                browseAvailableRooms(repo, checkIn, checkOut);
 
-        // Booking 1: Teddy books Grand Plaza Hotel for 5 nights
-        Booking booking1 = new Booking(1001, user1, hotel1,
-                "2026-05-10", "2026-05-15", BookingStatus.CONFIRMED);
-        repo.addBooking(booking1);
+                // 5. SEARCHABLE INTERFACE DEMO
+                printHeader("SEARCHABLE INTERFACE DEMO");
+                System.out.println("Searching bookings for 'Teddy'...");
+                repo.searchBookingsByUserName("Teddy").forEach(b -> b.display());
 
-        // Booking 2: Winnie books Cozy Corner for 4 nights
-        Booking booking2 = new Booking(1002, user2, gh1,
-                "2026-06-01", "2026-06-05", BookingStatus.CONFIRMED);
-        repo.addBooking(booking2);
+                // 6. INVENTORY COUNTS
+                printHeader("SYSTEM INVENTORY (Logic-based Counting)");
+                System.out.println("Total Hotels: " + repo.getHotelCount());
+                System.out.println("Total Guest Houses: " + repo.getGuestHouseCount());
+                System.out.println("Total Apartments: " + repo.getApartmentCount());
+                System.out.println("Total Bookings: " + repo.getTotalBookingsCount());
 
-        // Booking 3: Mickey books Skyline Loft for 7 nights
-        Booking booking3 = new Booking(1003, user3, apt1,
-                "2026-07-01", "2026-07-08", BookingStatus.CONFIRMED);
-        repo.addBooking(booking3);
-
-        // TEST AVAILABILITY CHECK -------------
-        System.out.println("\nSTEP 4: TESTING AVAILABILITY CHECK");
-        System.out.println("-".repeat(90));
-
-        boolean available = repo.isAvailable(101, "2026-05-12", "2026-05-14");
-        System.out
-                .println("  Is Grand Plaza Hotel available May 12-14? " + (available ? "YES" : "NO (already booked)"));
-
-        available = repo.isAvailable(101, "2026-05-20", "2026-05-25");
-        System.out.println("  Is Grand Plaza Hotel available May 20-25? " + (available ? "YES" : "NO"));
-
-        // Try to book overlapping dates (REJECTED!)
-        System.out.println("\n  Attempting double-booking (should be rejected):");
-        Booking overlapping = new Booking(1004, user2, hotel1,
-                "2026-05-12", "2026-05-14", BookingStatus.CONFIRMED);
-        repo.addBooking(overlapping); // failed
-
-        // UPDATE BOOKING STATUS -------------
-        System.out.println("\nSTEP 5: UPDATING BOOKING STATUSES");
-        System.out.println("-".repeat(90));
-
-        repo.updateBookingStatus(1001, BookingStatus.CHECKED_IN);
-        repo.updateBookingStatus(1002, BookingStatus.CANCELLED);
-        repo.updateBookingStatus(1003, BookingStatus.CHECKED_OUT);
-
-        // CREATE PAYMENTS -------------
-        System.out.println("\nSTEP 6: CREATING PAYMENTS");
-        System.out.println("-".repeat(90));
-
-        Payment pay1 = new Payment(5001, booking1, "CARD");
-        Payment pay2 = new Payment(5002, booking3, "ONLINE");
-
-        repo.addPayment(pay1);
-        repo.addPayment(pay2);
-
-        // DEMO USER HISTORY -------------
-        System.out.println("\nSTEP 7: USER HISTORY DEMO...");
-        System.out.println("-".repeat(90));
-
-        System.out.println("\n  Teddy Bear's Complete Booking History:");
-        for (Booking b : repo.getUserHistory(1)) {
-            System.out.println("    #" + b.getBookingId()
-                    + " | " + b.getAccommodation().getName()
-                    + " | " + b.getCheckInDate() + " to " + b.getCheckOutDate()
-                    + " | " + b.getStatus()
-                    + " | $" + String.format("%.2f", b.getTotalPrice()));
+                System.out.println("\n" + "=".repeat(70));
         }
 
-        // DEMO DELETE METHODS -------------
-        System.out.println("\nSTEP 8: HARD DELETE DEMO...");
-        System.out.println("-".repeat(90));
+        // Only displays rooms that are actually available.
+        // This solves the "shouldn't be on the display page" problem.
+        private static void browseAvailableRooms(BookingRepository repo, String start, String end) {
+                System.out.println("\nAVAILABLE ACCOMMODATIONS FOUND:");
 
-        System.out.println("\n  BEFORE any delete:");
-        System.out.println("    totalBookingsCreated = " + BookingRepository.getTotalBookingsCreated());
-        System.out.println("    allBookings.size() = " + repo.getAllBookings().size());
+                List<Accommodation> available = repo.getAvailableRooms(start, end);
 
-        // HARD DELETE - completely removed -------------
-        System.out.println("\n  HARD DELETE booking #1003:");
-        repo.hardDeleteBooking(1003);
-
-        System.out.println("\n  AFTER hard delete:");
-        System.out.println(
-                "    totalBookingsCreated = " + BookingRepository.getTotalBookingsCreated() + " (same - remembers!)");
-        System.out.println("    allBookings.size() = " + repo.getAllBookings().size() + " (DECREASED!)");
-
-        // Show what's left
-        System.out.println("\n  Remaining bookings:");
-        for (Booking b : repo.getAllBookings()) {
-            System.out.println("    #" + b.getBookingId() + " | " + b.getUser().getName()
-                    + " | " + b.getAccommodation().getName()
-                    + " | Status: " + b.getStatus());
+                if (available.isEmpty()) {
+                        System.out.println("  (!) No rooms available for these dates.");
+                } else {
+                        for (Accommodation acc : available) {
+                                acc.display();
+                                System.out.println("-----------------------------------");
+                        }
+                }
         }
 
-        // DISPLAY ALL DATA -------------
-        repo.displayAllData();
+        private static void setupInitialData(BookingRepository repo) {
+                System.out.println("\n--- SYSTEM SETUP ---");
 
-        // STATIC USAGE DEMO -------------
-        System.out.println("\n" + "~".repeat(90));
-        System.out.println("STATIC USAGE DEMO");
-        System.out.println("~".repeat(90));
+                // Create Users
+                System.out.println("\nUSERS:");
+                repo.addUser(new User(1, "Teddy Bear", "teddy@email.com", "012345678"));
+                repo.addUser(new User(2, "Winnie Pooh", "winnie@disney.com", "098765432"));
 
-        System.out.println(
-                "\n  BookingRepository.getTotalBookingsCreated() = " + BookingRepository.getTotalBookingsCreated());
-        System.out.println("  This counts ALL bookings EVER created (including cancelled)");
-        System.out.println("  Cancelled bookings are preserved in allBookings for history!");
-    }
+                // Create different types of rooms
+                System.out.println("\nACCOMMODATIONS:");
+                repo.addHotel(new Hotel(10, "Hotel Plaza", 200.0, 2, 5, true, true));
+                repo.addApartment(new Apartment(20, "City Center Loft", 120.0, 4, 15, true, true));
+                repo.addGuestHouse(new GuestHouse(30, "Quiet Cottage", 80.0, 2, true, false));
+        }
+
+        private static void printHeader(String title) {
+                System.out.println("\n\n[" + title + "]");
+                System.out.println("-".repeat(title.length() + 2));
+        }
 }
-
-

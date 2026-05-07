@@ -1,14 +1,12 @@
 package models;
 
 import java.time.LocalDateTime;
+import interfaces.Displayable;
+import interfaces.Payable;
 
-// Payment is connected to Booking
-// One Booking have one Payment
-// BookingRepository manages both Booking and Payment 
-
-public class Payment {
+public class Payment implements Displayable, Payable {
     private int paymentId;
-    private Booking booking; 
+    private Booking booking;
     // Association: Payment knows which Booking it covers
     private double amount;
     private String method;
@@ -50,12 +48,15 @@ public class Payment {
         return completed;
     }
 
-    // ── Setters ───────────────────────────────────────────────────────────────
+    @Override
+    public boolean isPaid() {
+        return completed;
+    }
+
     public void setBooking(Booking booking) {
         if (booking != null) {
             this.booking = booking;
         } else {
-            System.out.println("  [WARNING] Payment must be linked to a valid Booking.");
             this.booking = null;
         }
     }
@@ -64,12 +65,29 @@ public class Payment {
         if (method != null && (method.equals("CASH") || method.equals("CARD") || method.equals("ONLINE"))) {
             this.method = method;
         } else {
-            System.out.println("  [WARNING] Invalid payment method '" + method + "'. Using CASH.");
             this.method = "CASH";
         }
     }
 
-    public void setCompleted(boolean completed) {
-        this.completed = completed;
+    @Override
+    public void processPayment() {
+        this.completed = true;
+        System.out.println("Payment #" + paymentId + " processed: $" + amount);
+    }
+
+    @Override
+    public void display() {
+        System.out.println("=== PAYMENT DETAILS ===");
+        System.out.println("Payment ID: " + paymentId);
+        System.out.println("Booking ID: " + (booking != null ? booking.getBookingId() : "N/A"));
+        System.out.println("Amount: $" + amount);
+        System.out.println("Method: " + method);
+        System.out.println("Date: " + paymentDate.toLocalDate());
+        System.out.println("Status: " + (completed ? "COMPLETED" : "PENDING"));
+    }
+
+    @Override
+    public void displayName() {
+        System.out.println("Payment #" + paymentId + " - $" + amount + " (" + method + ")");
     }
 }

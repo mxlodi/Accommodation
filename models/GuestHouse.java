@@ -3,7 +3,7 @@ package models;
 // GuestHouse extends from Accommodation and adds only guest-house specific fields:
 // hasBreakfast, hasElevator
 
-public class GuestHouse extends Accommodation implements Displayable {
+public class GuestHouse extends Accommodation {
     private boolean hasBreakfast;
     private boolean hasElevator;
 
@@ -35,10 +35,18 @@ public class GuestHouse extends Accommodation implements Displayable {
     }
 
     @Override
-    public String getSummary() {
-        String breakfast = hasBreakfast ? "Breakfast incl." : "No breakfast";
-        String elevator = hasElevator ? "Elevator" : "Stairs only";
-        return "[GUEST HOUSE] " + getName() + " | $" + getPricePerNight()
-                + "/night | " + breakfast + " | " + elevator;
+    public String getType() {
+        return "GUEST_HOUSE";
+    }
+
+    @Override
+    public void display() {
+        System.out.println("=== GUEST HOUSE DETAILS ===");
+        System.out.println("ID: " + getAccId());
+        System.out.println("Name: " + getName());
+        System.out.println("Price: $" + getPricePerNight() + "/night");
+        System.out.println("Capacity: " + getCapacity() + " persons");
+        System.out.println("Breakfast: " + (hasBreakfast ? "Yes" : "No"));
+        System.out.println("Elevator: " + (hasElevator ? "Yes" : "No"));
     }
 }

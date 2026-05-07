@@ -1,248 +1,143 @@
-
 package repository;
 
 import models.*;
+import interfaces.Searchable;
+import java.time.LocalDate;
 import java.util.*;
 
-public class BookingRepository {
-
-    // STATIC COUNTER -------------
-    private static int totalBookingsCreated = 0;
-
-    public static int getTotalBookingsCreated() {
-        return totalBookingsCreated;
-    }
-
-    // SINGLE COLLECTION -------------
-    // ONE map for ALL bookings (confirmed, checked-in, cancelled, refunded, etc.)
+public class BookingRepository implements Searchable {
     private Map<Integer, Booking> allBookings = new HashMap<>();
-
-    // OTHER COLLECTIONS
     private List<User> users = new ArrayList<>();
     private List<Accommodation> accommodations = new ArrayList<>();
     private List<Payment> payments = new ArrayList<>();
 
-    // DATA VALIDATOR -------------
-    private class DataValidator {
-
-        public boolean isValidEmail(String email) {
-            return email != null && email.contains("@") && email.contains(".");
-        }
-
-        public boolean isValidPrice(double price) {
-            return price > 0;
-        }
-
-        public boolean isValidCapacity(int capacity) {
-            return capacity >= 1;
-        }
-
-        public boolean isValidStars(int stars) {
-            return stars >= 1 && stars <= 5;
-        }
-
-        public boolean areDatesValid(String checkIn, String checkOut) {
-            if (checkIn == null || checkOut == null)
-                return false;
-            if (!checkIn.matches("\\d{4}-\\d{2}-\\d{2}"))
-                return false;
-            if (!checkOut.matches("\\d{4}-\\d{2}-\\d{2}"))
-                return false;
-            return checkIn.compareTo(checkOut) < 0;
-        }
-
-        public boolean isDuplicateBooking(int bookingId) {
-            return allBookings.containsKey(bookingId);
-        }
-
-        public boolean isDuplicateUser(int userId) {
-            for (User u : users)
-                if (u.getUserId() == userId)
-                    return true;
-            return false;
-        }
-
-        public boolean isDuplicateAccommodation(int accId) {
-            for (Accommodation a : accommodations)
-                if (a.getAccId() == accId)
-                    return true;
-            return false;
-        }
-    }
-
-    private DataValidator validator = new DataValidator();
-
-    // USER MANAGEMENT-------------
+    // USER MANAGEMENT
     public void addUser(User user) {
-        if (validator.isDuplicateUser(user.getUserId())) {
-            System.out.println("  [ERROR] User ID " + user.getUserId() + " already exists!");
-        } else {
-            users.add(user);
-            System.out.println("  [OK]    User added: " + user.getName());
-        }
+        users.add(user);
+        System.out.println("User added: " + user.getName());
     }
 
     public List<User> getAllUsers() {
         return new ArrayList<>(users);
     }
 
-    // ACCOMMODATION MANAGEMENT -------------
-    public void addHotel(Hotel hotel) {
-        if (validator.isDuplicateAccommodation(hotel.getAccId())) {
-            System.out.println("  [ERROR] Accommodation ID " + hotel.getAccId() + " already exists!");
-            return;
+    public User findUserById(int userId) {
+        for (User u : users) {
+            if (u.getUserId() == userId)
+                return u;
         }
+        return null;
+    }
+
+    // ACCOMMODATION MANAGEMENT
+    public void addHotel(Hotel hotel) {
         accommodations.add(hotel);
-        displayAddedAccommodation(hotel);
+        hotel.displayName();
     }
 
     public void addGuestHouse(GuestHouse gh) {
-        if (validator.isDuplicateAccommodation(gh.getAccId())) {
-            System.out.println("  [ERROR] Accommodation ID " + gh.getAccId() + " already exists!");
-            return;
-        }
         accommodations.add(gh);
-        displayAddedAccommodation(gh);
+        gh.displayName();
     }
 
     public void addApartment(Apartment apt) {
-        if (validator.isDuplicateAccommodation(apt.getAccId())) {
-            System.out.println("  [ERROR] Accommodation ID " + apt.getAccId() + " already exists!");
-            return;
-        }
         accommodations.add(apt);
-        displayAddedAccommodation(apt);
+        apt.displayName();
     }
 
-    private void displayAddedAccommodation(Displayable accommodation) {
-        System.out.print("  [OK]    ");
-        accommodation.display();
+    public List<Accommodation> getAllAccommodations() {
+        return new ArrayList<>(accommodations);
     }
 
-    // BOOKING MANAGEMENT -------------
+    public Accommodation findAccommodationById(int accId) {
+        for (Accommodation a : accommodations) {
+            if (a.getAccId() == accId)
+                return a;
+        }
+        return null;
+    }
 
+    // BOOKING MANAGEMENT
     public void addBooking(Booking booking) {
         if (booking == null || booking.getUser() == null || booking.getAccommodation() == null) {
-            System.out.println("  [ERROR] Invalid booking data!");
-            return;
-        }
-        if (!validator.areDatesValid(booking.getCheckInDate(), booking.getCheckOutDate())) {
-            System.out.println("  [ERROR] Invalid dates for booking #" + booking.getBookingId());
-            return;
-        }
-        if (validator.isDuplicateBooking(booking.getBookingId())) {
-            System.out.println("  [ERROR] Booking ID " + booking.getBookingId() + " already exists!");
-            return;
-        }
-        if (booking.getTotalPrice() <= 0) {
-            System.out.println("  [ERROR] Total price is invalid for booking #" + booking.getBookingId());
+            System.out.println("[ERROR] Invalid booking data!");
             return;
         }
 
         if (!isAvailable(booking.getAccommodation().getAccId(),
                 booking.getCheckInDate(),
                 booking.getCheckOutDate())) {
-            System.out.println("  [ERROR] Booking #" + booking.getBookingId()
-                    + " rejected - accommodation not available for these dates!");
+            System.out.println("[ERROR] Booking #" + booking.getBookingId()
+                    + " rejected - accommodation not available!");
             return;
         }
 
         allBookings.put(booking.getBookingId(), booking);
-        totalBookingsCreated++;
-
-        System.out.println("  [OK]    Booking #" + booking.getBookingId()
-                + " | " + booking.getUser().getName()
-                + " -> " + booking.getAccommodation().getName()
-                + " | Check-in: " + booking.getCheckInDate()
-                + " | Check-out: " + booking.getCheckOutDate()
-                + " | " + booking.getNumberOfNights() + " nights"
-                + " | $" + String.format("%.2f", booking.getTotalPrice())
-                + " | Status: " + booking.getStatus()
-                + " | Confirmed: " + booking.getConfirmedDate());
+        System.out.println("[OK] Booking #" + booking.getBookingId() + " created");
     }
 
     public void updateBookingStatus(int bookingId, BookingStatus newStatus) {
         Booking booking = allBookings.get(bookingId);
         if (booking == null) {
-            System.out.println("  [ERROR] Booking #" + bookingId + " not found!");
+            System.out.println("[ERROR] Booking #" + bookingId + " not found!");
             return;
         }
-        StatusChangeable statusChange = booking;
-        BookingStatus oldStatus = statusChange.getStatus();
-        if (!statusChange.canChangeTo(newStatus)) {
-        System.out.println("  [ERROR] Cannot change booking #" + bookingId + 
-                         " from " + oldStatus + " to " + newStatus);
-        return;
+        BookingStatus oldStatus = booking.getStatus();
+        if (!booking.canChangeTo(newStatus)) {
+            System.out.println("[ERROR] Cannot change booking #" + bookingId +
+                    " from " + oldStatus + " to " + newStatus);
+            return;
+        }
+        booking.setStatus(newStatus);
+        System.out.println("[OK] Booking #" + bookingId + " status: " + oldStatus + " -> " + newStatus);
     }
-    
-    statusChange.setStatus(newStatus);
-    System.out.println("  [OK]    Booking #" + bookingId + " status: " + oldStatus + " → " + newStatus);
-}
 
-    // DELETE METHODS -------------
-
-    // HARD DELETE - Completely remove from collection
     public void hardDeleteBooking(int bookingId) {
         Booking removed = allBookings.remove(bookingId);
         if (removed == null) {
-            System.out.println("  [ERROR] Booking #" + bookingId + " not found!");
+            System.out.println("[ERROR] Booking #" + bookingId + " not found!");
             return;
         }
-
-        System.out.println("  [OK]    Booking #" + bookingId + " hard deleted (removed from system)");
-        System.out.println("  [INFO]  totalBookingsCreated still = " + totalBookingsCreated);
-        System.out.println("  [INFO]  allBookings.size() now = " + allBookings.size());
+        System.out.println("[OK] Booking #" + bookingId + " hard deleted");
     }
 
-    // BOOKING QUERIES -------------
-
-    // 1. getAllBookings() - EVERYTHING (confirmed, checked-in, completed,
-    // cancelled, refunded)
+    // BOOKING QUERIES
     public Collection<Booking> getAllBookings() {
         return allBookings.values();
     }
 
-    // 2 & 3. getBookingsByStatus(status) - Only bookings with specific status
     public Collection<Booking> getBookingsByStatus(BookingStatus status) {
         List<Booking> result = new ArrayList<>();
         for (Booking b : allBookings.values()) {
-            if (b.getStatus() == status) {
+            if (b.getStatus() == status)
                 result.add(b);
-            }
         }
         return result;
     }
 
-    // 4. getUserHistory(userId) - User's complete history (all their bookings)
     public List<Booking> getUserHistory(int userId) {
         List<Booking> history = new ArrayList<>();
         for (Booking b : allBookings.values()) {
-            if (b.getUser().getUserId() == userId) {
+            if (b.getUser().getUserId() == userId)
                 history.add(b);
-            }
         }
-        // Sort by check-in date (most recent first)
         history.sort((b1, b2) -> b2.getCheckInDate().compareTo(b1.getCheckInDate()));
         return history;
     }
 
-    // 5. isAvailable(accId, dates) - Check if room is free
     public boolean isAvailable(int accommodationId, String checkIn, String checkOut) {
+        LocalDate newIn = LocalDate.parse(checkIn);
+        LocalDate newOut = LocalDate.parse(checkOut);
+
         for (Booking b : allBookings.values()) {
-            // Only check ACTIVE bookings (CONFIRMED and CHECKED_IN)
             if (b.getAccommodation().getAccId() == accommodationId) {
-                if (b.getStatus() == BookingStatus.CONFIRMED ||
-                        b.getStatus() == BookingStatus.CHECKED_IN) {
+                if (b.getStatus() == BookingStatus.CONFIRMED || b.getStatus() == BookingStatus.CHECKED_IN) {
+                    LocalDate existingIn = LocalDate.parse(b.getCheckInDate());
+                    LocalDate existingOut = LocalDate.parse(b.getCheckOutDate());
 
-                    String existingIn = b.getCheckInDate();
-                    String existingOut = b.getCheckOutDate();
-
-                    // Check if date ranges overlap
-                    // Overlap happens when: newIn < existingOut AND newOut > existingIn
-                    if (checkIn.compareTo(existingOut) < 0 &&
-                            checkOut.compareTo(existingIn) > 0) {
-                        System.out.println("  [REJECTED] Overlaps with booking #" + b.getBookingId());
-                        return false; // Overlap found - NOT available
+                    if (newIn.isBefore(existingOut) && newOut.isAfter(existingIn)) {
+                        System.out.println("[REJECTED] Overlaps with booking #" + b.getBookingId());
+                        return false;
                     }
                 }
             }
@@ -250,138 +145,140 @@ public class BookingRepository {
         return true;
     }
 
-    // PAYMENT MANAGEMENT -------------
+public List<Accommodation> getAvailableRooms(String checkIn, String checkOut) {
+    List<Accommodation> availableResults = new ArrayList<>();
+    
+    for (Accommodation acc : accommodations) {
+        // reuse your existing isAvailable logic
+        if (isAvailable(acc.getAccId(), checkIn, checkOut)) {
+            availableResults.add(acc);
+        }
+    }
+    return availableResults;
+}
+
+    // PAYMENT MANAGEMENT
     public void addPayment(Payment payment) {
         if (payment == null || payment.getBooking() == null) {
-            System.out.println("  [ERROR] Payment must be linked to a valid booking!");
+            System.out.println("[ERROR] Payment must be linked to a valid booking!");
             return;
         }
         payments.add(payment);
-        System.out.println("  [OK]    Payment #" + payment.getPaymentId()
-                + " | Booking #" + payment.getBooking().getBookingId()
-                + " | $" + String.format("%.2f", payment.getAmount())
-                + " | " + payment.getMethod()
-                + " | Payment Date: " + java.time.LocalDateTime.now().toLocalDate());
+        System.out.println("[OK] Payment #" + payment.getPaymentId() + " created");
     }
 
-    // DISPLAY METHODS -------------
-    public void displayAllData() {
-        System.out.println("\n" + "~".repeat(90));
-        System.out.println("SYSTEM DATA OVERVIEW");
-        System.out.println("~".repeat(90));
+    public List<Payment> getAllPayments() {
+        return new ArrayList<>(payments);
+    }
 
-        // USERS
-        System.out.println("\n[USERS] Total: " + users.size());
-        System.out.println("-".repeat(90));
-        for (User u : users) {
-            System.out.println("  ID:" + u.getUserId() + " | " + u.getName());
-        }
+    // STATISTICS
+    public int getTotalBookingsCount() {
+        return allBookings.size();
+    }
 
-        // ACCOMMODATIONS
-        System.out.println("\n[ACCOMMODATIONS] Total: " + accommodations.size());
-        System.out.println("-".repeat(90));
+    public int getHotelCount() {
+        int count = 0;
         for (Accommodation a : accommodations) {
-            System.out.print("  ID:" + a.getAccId() + " | ");
-            if (a instanceof Displayable) {
-                ((Displayable) a).display();
-            } else {
-                System.out.println(a.getSummary());
+            if (a instanceof Hotel)
+                count++;
+        }
+        return count;
+    }
+
+    public int getGuestHouseCount() {
+        int count = 0;
+        for (Accommodation a : accommodations) {
+            if (a instanceof GuestHouse)
+                count++;
+        }
+        return count;
+    }
+
+    public int getApartmentCount() {
+        int count = 0;
+        for (Accommodation a : accommodations) {
+            if (a instanceof Apartment)
+                count++;
+        }
+        return count;
+    }
+
+    // SEARCHABLE INTERFACE IMPLEMENTATION
+
+    @Override
+    public List<Booking> searchBookingsByUserName(String name) {
+        List<Booking> results = new ArrayList<>();
+        for (Booking b : allBookings.values()) {
+            if (b.getUser().getName().toLowerCase().contains(name.toLowerCase())) {
+                results.add(b);
             }
         }
+        return results;
+    }
 
-        // 1. getAllBookings() - EVERYTHING (complete history)
-        System.out.println("\n[1. getAllBookings() - COMPLETE HISTORY] Total: " + allBookings.size());
-        System.out.println("-".repeat(90));
-        for (Booking b : getAllBookings()) {
-            String icon;
-            switch (b.getStatus()) {
-                case CONFIRMED:
-                    icon = "[CONFIRMED]";
-                    break;
-                case CHECKED_IN:
-                    icon = "[IN]";
-                    break;
-                case CHECKED_OUT:
-                    icon = "[OUT]";
-                    break;
-                case CANCELLED:
-                    icon = "[CANCELLED]";
-                    break;
-                case REFUNDED:
-                    icon = "[REFUNDED]";
-                    break;
-                default:
-                    icon = "[ ]";
+    @Override
+    public List<Accommodation> searchAccommodationsByName(String name) {
+        List<Accommodation> results = new ArrayList<>();
+        for (Accommodation a : accommodations) {
+            if (a.getName().toLowerCase().contains(name.toLowerCase())) {
+                results.add(a);
             }
-            System.out.println("  " + icon + " #" + b.getBookingId()
-                    + " | " + b.getUser().getName()
-                    + " | " + b.getAccommodation().getName()
-                    + " | " + b.getCheckInDate() + " to " + b.getCheckOutDate()
-                    + " | " + b.getStatus()
-                    + " | $" + String.format("%.2f", b.getTotalPrice()));
         }
+        return results;
+    }
 
-        // 2 & 3. getBookingsByStatus() examples
-        System.out.println("\n[2. getBookingsByStatus(CONFIRMED) - Upcoming Stays] Total: "
-                + getBookingsByStatus(BookingStatus.CONFIRMED).size());
-        System.out.println("-".repeat(90));
-        for (Booking b : getBookingsByStatus(BookingStatus.CONFIRMED)) {
-            System.out.println(
-                    "   #" + b.getBookingId() + " | " + b.getUser().getName() + " | " + b.getAccommodation().getName());
-        }
-
-        System.out.println("\n[3. getBookingsByStatus(CHECKED_IN) - Current Guests] Total: "
-                + getBookingsByStatus(BookingStatus.CHECKED_IN).size());
-        System.out.println("-".repeat(90));
-        for (Booking b : getBookingsByStatus(BookingStatus.CHECKED_IN)) {
-            System.out.println("    #" + b.getBookingId() + " | " + b.getUser().getName() + " | "
-                    + b.getAccommodation().getName());
-        }
-
-        // 4. getUserHistory() examples
-        System.out.println("\n[4. getUserHistory() - Complete User History]");
-        System.out.println("-".repeat(90));
+    @Override
+    public List<User> searchUsersByName(String name) {
+        List<User> results = new ArrayList<>();
         for (User u : users) {
-            System.out.println("\n  User: " + u.getName() + " (ID: " + u.getUserId() + ")");
-            List<Booking> history = getUserHistory(u.getUserId());
-            if (history.isEmpty()) {
-                System.out.println("    No bookings found.");
-            } else {
-                for (Booking b : history) {
-                    System.out.println("    #" + b.getBookingId() + " | " + b.getAccommodation().getName()
-                            + " | " + b.getCheckInDate() + " to " + b.getCheckOutDate()
-                            + " | " + b.getStatus());
-                }
+            if (u.getName().toLowerCase().contains(name.toLowerCase())) {
+                results.add(u);
             }
         }
+        return results;
+    }
 
-        // 5. isAvailable() demo
-        System.out.println("\n[5. isAvailable() - Availability Check Demo]");
-        System.out.println("-".repeat(90));
-        if (accommodations.size() > 0) {
-            int testId = accommodations.get(0).getAccId();
-            String testDates = "2026-12-01 to 2026-12-05";
-            boolean avail = isAvailable(testId, "2026-12-01", "2026-12-05");
-            System.out.println(
-                    "  Accommodation ID " + testId + " available on " + testDates + "? " + (avail ? "YES" : "NO"));
+    @Override
+    public List<Booking> searchBookingsByDateRange(String startDate, String endDate) {
+        List<Booking> results = new ArrayList<>();
+        LocalDate start = LocalDate.parse(startDate);
+        LocalDate end = LocalDate.parse(endDate);
+        for (Booking b : allBookings.values()) {
+            LocalDate checkIn = LocalDate.parse(b.getCheckInDate());
+            LocalDate checkOut = LocalDate.parse(b.getCheckOutDate());
+            if (!(checkIn.isAfter(end) || checkOut.isBefore(start))) {
+                results.add(b);
+            }
+        }
+        return results;
+    }
+
+    // DISPLAY METHODS
+    public void displayAllData() {
+        System.out.println("\n" + "=".repeat(80));
+        System.out.println("SYSTEM DATA OVERVIEW");
+        System.out.println("=".repeat(80));
+
+        System.out.println("\n[USERS]");
+        for (User u : users) {
+            u.displayName();
         }
 
-        // PAYMENTS
-        System.out.println("\n[PAYMENTS] Total: " + payments.size());
-        System.out.println("-".repeat(90));
+        System.out.println("\n[ACCOMMODATIONS]");
+        for (Accommodation a : accommodations) {
+            a.displayName();
+        }
+
+        System.out.println("\n[BOOKINGS]");
+        for (Booking b : allBookings.values()) {
+            b.displayName();
+        }
+
+        System.out.println("\n[PAYMENTS]");
         for (Payment p : payments) {
-            System.out.println("  Payment #" + p.getPaymentId()
-                    + " | Booking #" + p.getBooking().getBookingId()
-                    + " | $" + String.format("%.2f", p.getAmount())
-                    + " | " + p.getMethod());
+            p.displayName();
         }
 
-        // STATIC COUNTER
-        System.out.println("\n[STATIC COUNTER]");
-        System.out.println("-".repeat(90));
-        System.out.println(
-                "  BookingRepository.getTotalBookingsCreated() = " + BookingRepository.getTotalBookingsCreated());
-        System.out.println("  allBookings.size() (currently stored)       = " + allBookings.size());
-        System.out.println("  -> Cancelled/Refunded bookings stay in allBookings for history!");
+        System.out.println("\n[TOTAL BOOKINGS: " + allBookings.size() + "]");
     }
 }

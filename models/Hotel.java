@@ -4,7 +4,7 @@ package models;
 // stars, hasBreakfast, hasPool
 // name, pricePerNight, capacity are handled by Accommodation
 
-public class Hotel extends Accommodation implements Displayable {
+public class Hotel extends Accommodation{
     private int stars;
     private boolean hasBreakfast;
     private boolean hasPool;
@@ -32,10 +32,17 @@ public class Hotel extends Accommodation implements Displayable {
     }
 
     @Override
-    public String getSummary() {
-        String breakfast = hasBreakfast ? "Breakfast incl." : "No breakfast";
-        String pool      = hasPool      ? "Pool"            : "No pool";
-        return "[HOTEL] " + getName() + " | " + stars + "-star | $" + getPricePerNight()
-                + "/night | " + breakfast + " | " + pool;
+    public String getType() { return "HOTEL"; }
+
+    @Override
+    public void display() {
+        System.out.println("=== HOTEL DETAILS ===");
+        System.out.println("ID: " + getAccId());
+        System.out.println("Name: " + getName());
+        System.out.println("Stars: " + stars + "-star");
+        System.out.println("Price: $" + getPricePerNight() + "/night");
+        System.out.println("Capacity: " + getCapacity() + " persons");
+        System.out.println("Breakfast: " + (hasBreakfast ? "Yes" : "No"));
+        System.out.println("Pool: " + (hasPool ? "Yes" : "No"));
     }
 }

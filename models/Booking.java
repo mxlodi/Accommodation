@@ -2,8 +2,10 @@ package models;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import interfaces.StatusChangeable;
+import interfaces.Displayable;
 
-public class Booking implements StatusChangeable {
+public class Booking implements StatusChangeable, Displayable {
 
     private int bookingId;
     private User user;
@@ -12,21 +14,20 @@ public class Booking implements StatusChangeable {
     private LocalDate checkOutDate;
     private double totalPrice;
     private BookingStatus status;
-    private String confirmedDate;
+    private String confirmedDate;  // This is your booking date
 
     public Booking(int bookingId, User user, Accommodation accommodation,
-            String checkInDate, String checkOutDate, BookingStatus status) {
+                   String checkInDate, String checkOutDate, BookingStatus status) {
         this.bookingId = bookingId;
         this.user = user;
         this.accommodation = accommodation;
-        this.confirmedDate = java.time.LocalDate.now().toString();
-
-        setCheckInDate(LocalDate.parse(checkInDate));
-        setCheckOutDate(LocalDate.parse(checkOutDate));
-        setStatus(status);
-        this.totalPrice = calculateTotalPrice();
+        this.checkInDate = LocalDate.parse(checkInDate);
+        this.checkOutDate = LocalDate.parse(checkOutDate);
+        this.status = status;
+        this.confirmedDate = LocalDate.now().toString();  // FIXED: Use confirmedDate, not bookingDate
+        this.totalPrice = accommodation.getPricePerNight() * getNumberOfNights();
     }
-
+    
     // Getters
     public int getBookingId() {
         return bookingId;
@@ -87,47 +88,49 @@ public class Booking implements StatusChangeable {
     @Override
     public void setStatus(BookingStatus status) {
         if (status == null) {
-            System.out.println("  [WARNING] Status cannot be null. Setting to CANCELLED.");
             this.status = BookingStatus.CANCELLED;
         } else {
             this.status = status;
         }
     }
 
-    // Status flow validation 
-    @Override
-    public boolean canChangeTo(BookingStatus newStatus) {
-        if (this.status == BookingStatus.CONFIRMED) {
-            if (newStatus == BookingStatus.CHECKED_IN || newStatus == BookingStatus.CANCELLED) {
-                return true;
-            } else {
-                return false;
-            }
-        } else if (this.status == BookingStatus.CHECKED_IN) {
-            if (newStatus == BookingStatus.CHECKED_OUT || newStatus == BookingStatus.CANCELLED) {
-                return true;
-            } else {
-                return false;
-            }
-        } else if (this.status == BookingStatus.CANCELLED) {
-            if (newStatus == BookingStatus.REFUNDED) {
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            return false;
-        }
-    }
-
-    // Business Logic 
     public int getNumberOfNights() {
-        if (checkInDate == null || checkOutDate == null) return 0;
         return (int) ChronoUnit.DAYS.between(checkInDate, checkOutDate);
     }
 
     private double calculateTotalPrice() {
         if (accommodation == null) return 0.0;
         return accommodation.getPricePerNight() * getNumberOfNights();
+    }
+   
+    @Override
+    public boolean canChangeTo(BookingStatus newStatus) {
+        if (this.status == BookingStatus.CONFIRMED) {
+            return newStatus == BookingStatus.CHECKED_IN || newStatus == BookingStatus.CANCELLED;
+        } else if (this.status == BookingStatus.CHECKED_IN) {
+            return newStatus == BookingStatus.CHECKED_OUT || newStatus == BookingStatus.CANCELLED;
+        } else if (this.status == BookingStatus.CANCELLED) {
+            return newStatus == BookingStatus.REFUNDED;
+        }
+        return false;
+    }
+
+    @Override
+    public void display() {
+        System.out.println("=== BOOKING DETAILS ===");
+        System.out.println("Booking ID: " + bookingId);
+        System.out.println("User: " + user.getName());
+        System.out.println("Accommodation: " + accommodation.getName());
+        System.out.println("Check-in: " + checkInDate);
+        System.out.println("Check-out: " + checkOutDate);
+        System.out.println("Nights: " + getNumberOfNights());
+        System.out.println("Total Price: $" + totalPrice);
+        System.out.println("Status: " + status);
+        System.out.println("Confirmed Date: " + confirmedDate);
+    }
+
+    @Override
+    public void displayName() {
+        System.out.println("Booking #" + bookingId + " - " + user.getName() + " at " + accommodation.getName());
     }
 }
