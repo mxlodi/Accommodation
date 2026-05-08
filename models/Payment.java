@@ -7,7 +7,6 @@ import interfaces.Payable;
 public class Payment implements Displayable, Payable {
     private int paymentId;
     private Booking booking;
-    // Association: Payment knows which Booking it covers
     private double amount;
     private String method;
     private LocalDateTime paymentDate;

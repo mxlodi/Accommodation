@@ -54,20 +54,21 @@ public class Main {
 
         // 7. PAYMENT PROCESSING DEMO
         printHeader("PAYMENT PROCESSING DEMO");
-        
+
         System.out.println("\nCreating payment for Booking #1001...");
         Payment payment = new Payment(5001, bookingA, "CARD");
         repo.addPayment(payment);
-        
+
         payment.display();
-        
+
         System.out.println("\nAll payments in system:");
         for (Payment p : repo.getAllPayments()) {
             p.displayName();
         }
     }
 
-    // Only displays rooms that are actually available so that we can hide unavailable rooms
+    // Only displays rooms that are actually available so that we can hide
+    // unavailable rooms
     private static void browseAvailableRooms(BookingRepository repo, String start, String end) {
         System.out.println("\nAVAILABLE ACCOMMODATIONS FOUND:");
 
@@ -94,7 +95,7 @@ public class Main {
         // Create different types of rooms
         System.out.println("\nACCOMMODATIONS:");
         repo.addHotel(new Hotel(10, "Hotel Plaza", 200.0, 2, 5, true, true));
-        repo.addApartment(new Apartment(20, "City Center Loft", 120.0, 4, 15, true, true));
+        repo.addApartment(new Apartment(20, "City Center Loft", 120.0, 4, 15, true ,true, true));
         repo.addGuestHouse(new GuestHouse(30, "Quiet Cottage", 80.0, 2, true, false));
     }
 

@@ -25,7 +25,7 @@ public class Booking implements StatusChangeable, Displayable {
         this.checkOutDate = LocalDate.parse(checkOutDate);
         this.status = status;
         this.confirmedDate = LocalDate.now().toString();
-        this.totalPrice = calculateTotalPrice(); // ← Use the method!
+        this.totalPrice = calculateTotalPrice(); 
     }
 
     // Getters

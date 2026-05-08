@@ -7,12 +7,12 @@ public class Apartment extends Accommodation  {
     private boolean hasPool;
 
     public Apartment(int apartmentId, String name, double pricePerNight, int capacity,
-            int floor, boolean hasElevator, boolean hasBreakfast) {
+            int floor, boolean hasElevator, boolean hasBreakfast, boolean hasPool) {
         super(apartmentId, name, pricePerNight, capacity);
         setFloor(floor);
         this.hasElevator = hasElevator;
         this.hasBreakfast = hasBreakfast;
-        this.hasPool = false; 
+        this.hasPool = hasPool;  
         
     }
 
