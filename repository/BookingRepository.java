@@ -125,6 +125,8 @@ public class BookingRepository implements Searchable {
         return history;
     }
 
+
+    // checking for the availability by using the checkIn and checkOut dates and comfirmed status
     public boolean isAvailable(int accommodationId, String checkIn, String checkOut) {
         LocalDate newIn = LocalDate.parse(checkIn);
         LocalDate newOut = LocalDate.parse(checkOut);
@@ -136,7 +138,7 @@ public class BookingRepository implements Searchable {
                     LocalDate existingOut = LocalDate.parse(b.getCheckOutDate());
 
                     if (newIn.isBefore(existingOut) && newOut.isAfter(existingIn)) {
-                        System.out.println("[REJECTED] Overlaps with booking #" + b.getBookingId());
+                        System.out.println("[REJECTED] Overlaps with booking #" + b.getBookingId() + "\n");
                         return false;
                     }
                 }
@@ -145,17 +147,18 @@ public class BookingRepository implements Searchable {
         return true;
     }
 
-public List<Accommodation> getAvailableRooms(String checkIn, String checkOut) {
-    List<Accommodation> availableResults = new ArrayList<>();
-    
-    for (Accommodation acc : accommodations) {
-        // reuse your existing isAvailable logic
-        if (isAvailable(acc.getAccId(), checkIn, checkOut)) {
-            availableResults.add(acc);
+    // check whether the room or accommodation is available
+    public List<Accommodation> getAvailableRooms(String checkIn, String checkOut) {
+        List<Accommodation> availableResults = new ArrayList<>();
+        
+        for (Accommodation acc : accommodations) {
+            // reuse your existing isAvailable logic
+            if (isAvailable(acc.getAccId(), checkIn, checkOut)) {
+                availableResults.add(acc);
+            }
         }
-    }
-    return availableResults;
-}
+        return availableResults;
+    }       
 
     // PAYMENT MANAGEMENT
     public void addPayment(Payment payment) {
@@ -171,11 +174,11 @@ public List<Accommodation> getAvailableRooms(String checkIn, String checkOut) {
         return new ArrayList<>(payments);
     }
 
-    // STATISTICS
+    // COUNT THE TOTAL NUMBER OF BOOKINGS
     public int getTotalBookingsCount() {
         return allBookings.size();
     }
-
+    // COUNT THE TOTAL NUMBER OF ACCOMMODATIONS
     public int getHotelCount() {
         int count = 0;
         for (Accommodation a : accommodations) {
@@ -216,6 +219,7 @@ public List<Accommodation> getAvailableRooms(String checkIn, String checkOut) {
         return results;
     }
 
+    // SEARCH BY NAME
     @Override
     public List<Accommodation> searchAccommodationsByName(String name) {
         List<Accommodation> results = new ArrayList<>();
@@ -227,6 +231,7 @@ public List<Accommodation> getAvailableRooms(String checkIn, String checkOut) {
         return results;
     }
 
+    // SEARCH BY USER NAME
     @Override
     public List<User> searchUsersByName(String name) {
         List<User> results = new ArrayList<>();
@@ -237,7 +242,7 @@ public List<Accommodation> getAvailableRooms(String checkIn, String checkOut) {
         }
         return results;
     }
-
+    // SEARCH BY DATE RANGE
     @Override
     public List<Booking> searchBookingsByDateRange(String startDate, String endDate) {
         List<Booking> results = new ArrayList<>();

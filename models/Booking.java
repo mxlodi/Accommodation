@@ -117,7 +117,7 @@ public class Booking implements StatusChangeable, Displayable {
 
     @Override
     public void display() {
-        System.out.println("=== BOOKING DETAILS ===");
+        System.out.println("BOOKING DETAILS ");
         System.out.println("Booking ID: " + bookingId);
         System.out.println("User: " + user.getName());
         System.out.println("Accommodation: " + accommodation.getName());

@@ -60,7 +60,7 @@ public class User implements Displayable {
 
     @Override
     public void display() {
-        System.out.println("=== USER DETAILS ===");
+        System.out.println("USER DETAILS ");
         System.out.println("ID: " + userId);
         System.out.println("Name: " + name);
         System.out.println("Email: " + email);

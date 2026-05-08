@@ -1,7 +1,5 @@
 package models;
 
-// GuestHouse extends from Accommodation and adds only guest-house specific fields:
-// hasBreakfast, hasElevator
 
 public class GuestHouse extends Accommodation {
     private boolean hasBreakfast;
@@ -41,7 +39,7 @@ public class GuestHouse extends Accommodation {
 
     @Override
     public void display() {
-        System.out.println("=== GUEST HOUSE DETAILS ===");
+        System.out.println("GUESTHOUSE DETAILS ");
         System.out.println("ID: " + getAccId());
         System.out.println("Name: " + getName());
         System.out.println("Price: $" + getPricePerNight() + "/night");

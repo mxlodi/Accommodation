@@ -4,23 +4,34 @@ package models;
 // stars, hasBreakfast, hasPool
 // name, pricePerNight, capacity are handled by Accommodation
 
-public class Hotel extends Accommodation{
+public class Hotel extends Accommodation {
     private int stars;
     private boolean hasBreakfast;
     private boolean hasPool;
 
     public Hotel(int hotelId, String name, double pricePerNight, int capacity,
-                 int stars, boolean hasBreakfast, boolean hasPool) {
+            int stars, boolean hasBreakfast, boolean hasPool) {
         super(hotelId, name, pricePerNight, capacity);
         setStars(stars);
         this.hasBreakfast = hasBreakfast;
-        this.hasPool      = hasPool;
+        this.hasPool = hasPool;
     }
 
-    public int getHotelId()        { return getAccId(); }
-    public int getStars()          { return stars; }
-    public boolean isHasBreakfast(){ return hasBreakfast; }
-    public boolean isHasPool()     { return hasPool; }
+    public int getHotelId() {
+        return getAccId();
+    }
+
+    public int getStars() {
+        return stars;
+    }
+
+    public boolean isHasBreakfast() {
+        return hasBreakfast;
+    }
+
+    public boolean isHasPool() {
+        return hasPool;
+    }
 
     public void setStars(int stars) {
         if (stars < 1 || stars > 5) {
@@ -32,11 +43,13 @@ public class Hotel extends Accommodation{
     }
 
     @Override
-    public String getType() { return "HOTEL"; }
+    public String getType() {
+        return "HOTEL";
+    }
 
     @Override
     public void display() {
-        System.out.println("=== HOTEL DETAILS ===");
+        System.out.println("HOTEL DETAILS ");
         System.out.println("ID: " + getAccId());
         System.out.println("Name: " + getName());
         System.out.println("Stars: " + stars + "-star");

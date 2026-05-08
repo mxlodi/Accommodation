@@ -20,7 +20,7 @@ public abstract class Accommodation implements Displayable, Bookable {
     public int getAccId() { return accId; }
     public String getName() { return name; }
     
-    // Bookable interface methods (no @Override duplication issue)
+    // Bookable interface methods
     public double getPricePerNight() { return pricePerNight; }
     public int getCapacity() { return capacity; }
 
@@ -49,7 +49,7 @@ public abstract class Accommodation implements Displayable, Bookable {
         }
     }
 
-    // Bookable interface method
+    // calculate the total price
     public double calculatePrice(int nights) {
         return pricePerNight * nights;
     }

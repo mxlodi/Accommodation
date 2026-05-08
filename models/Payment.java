@@ -77,7 +77,7 @@ public class Payment implements Displayable, Payable {
 
     @Override
     public void display() {
-        System.out.println("=== PAYMENT DETAILS ===");
+        System.out.println("=> PAYMENT DETAILS ");
         System.out.println("Payment ID: " + paymentId);
         System.out.println("Booking ID: " + (booking != null ? booking.getBookingId() : "N/A"));
         System.out.println("Amount: $" + amount);

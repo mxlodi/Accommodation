@@ -1,9 +1,5 @@
 package models;
 
-
-// Apartment extends from Accommodation, adds ONLY apartment specific fields:
-// floor, hasElevator, hasBreakfast, hasPool
-
 public class Apartment extends Accommodation  {
     private int floor;
     private boolean hasElevator;
@@ -16,7 +12,7 @@ public class Apartment extends Accommodation  {
         setFloor(floor);
         this.hasElevator = hasElevator;
         this.hasBreakfast = hasBreakfast;
-        this.hasPool = false; // default
+        this.hasPool = false; 
         
     }
 
@@ -66,7 +62,7 @@ public class Apartment extends Accommodation  {
 
     @Override
     public void display() {
-        System.out.println("=== APARTMENT DETAILS ===");
+        System.out.println("APARTMENT DETAILS ");
         System.out.println("ID: " + getAccId());
         System.out.println("Name: " + getName());
         System.out.println("Floor: " + floor);

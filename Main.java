@@ -46,17 +46,16 @@ public class Main {
                 repo.searchBookingsByUserName("Teddy").forEach(b -> b.display());
 
                 // 6. INVENTORY COUNTS
-                printHeader("SYSTEM INVENTORY (Logic-based Counting)");
+                printHeader("SYSTEM INVENTORY");
                 System.out.println("Total Hotels: " + repo.getHotelCount());
                 System.out.println("Total Guest Houses: " + repo.getGuestHouseCount());
                 System.out.println("Total Apartments: " + repo.getApartmentCount());
-                System.out.println("Total Bookings: " + repo.getTotalBookingsCount());
+                System.out.println("=> Total Bookings: " + repo.getTotalBookingsCount());
 
                 System.out.println("\n" + "=".repeat(70));
         }
 
-        // Only displays rooms that are actually available.
-        // This solves the "shouldn't be on the display page" problem.
+        // Only displays rooms that are actually availablE so that we can hide unavailable rooms
         private static void browseAvailableRooms(BookingRepository repo, String start, String end) {
                 System.out.println("\nAVAILABLE ACCOMMODATIONS FOUND:");
 
