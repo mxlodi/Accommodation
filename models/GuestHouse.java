@@ -39,7 +39,7 @@ public class GuestHouse extends Accommodation {
 
     @Override
     public void display() {
-        System.out.println("GUESTHOUSE DETAILS ");
+        System.out.println("- GUESTHOUSE DETAILS -");
         System.out.println("ID: " + getAccId());
         System.out.println("Name: " + getName());
         System.out.println("Price: $" + getPricePerNight() + "/night");

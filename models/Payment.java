@@ -17,10 +17,9 @@ public class Payment implements Displayable, Payable {
         this.paymentId = paymentId;
         setBooking(booking);
         setMethod(method);
-        // Amount is taken directly from the booking's calculated totalPrice
         this.amount = (booking != null) ? booking.getTotalPrice() : 0.0;
         this.paymentDate = LocalDateTime.now();
-        this.completed = true;
+        this.completed = false; // Payment starts as PENDING
     }
 
     // ── Getters ───────────────────────────────────────────────────────────────
@@ -71,8 +70,12 @@ public class Payment implements Displayable, Payable {
 
     @Override
     public void processPayment() {
-        this.completed = true;
-        System.out.println("Payment #" + paymentId + " processed: $" + amount);
+        if (!completed) {
+            this.completed = true;
+            System.out.println("Payment #" + paymentId + " processed: $" + amount);
+        } else {
+            System.out.println("Payment #" + paymentId + " already completed!");
+        }
     }
 
     @Override
@@ -89,5 +92,31 @@ public class Payment implements Displayable, Payable {
     @Override
     public void displayName() {
         System.out.println("Payment #" + paymentId + " - $" + amount + " (" + method + ")");
+    }
+
+    // Process refund
+    public void processRefund() {
+        if (completed) {
+            System.out.println("Refunding $" + amount + " for payment #" + paymentId);
+            completed = false;
+        } else {
+            System.out.println("Payment #" + paymentId + " is not completed. Cannot refund.");
+        }
+    }
+
+    // Validate payment method is acceptable
+    public boolean isValidMethod() {
+        return method.equals("CASH") || method.equals("CARD") || method.equals("ONLINE");
+    }
+
+    // Change payment method after creation (with validation)
+    public boolean changeMethod(String newMethod) {
+        if (newMethod != null && (newMethod.equals("CASH") || newMethod.equals("CARD") || newMethod.equals("ONLINE"))) {
+            this.method = newMethod;
+            System.out.println("Payment method changed to: " + newMethod);
+            return true;
+        }
+        System.out.println("[ERROR] Invalid payment method: " + newMethod);
+        return false;
     }
 }

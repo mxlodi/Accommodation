@@ -14,20 +14,20 @@ public class Booking implements StatusChangeable, Displayable {
     private LocalDate checkOutDate;
     private double totalPrice;
     private BookingStatus status;
-    private String confirmedDate;  // This is your booking date
+    private String confirmedDate; // This is your booking date
 
     public Booking(int bookingId, User user, Accommodation accommodation,
-                   String checkInDate, String checkOutDate, BookingStatus status) {
+            String checkInDate, String checkOutDate, BookingStatus status) {
         this.bookingId = bookingId;
         this.user = user;
         this.accommodation = accommodation;
         this.checkInDate = LocalDate.parse(checkInDate);
         this.checkOutDate = LocalDate.parse(checkOutDate);
         this.status = status;
-        this.confirmedDate = LocalDate.now().toString();  // FIXED: Use confirmedDate, not bookingDate
-        this.totalPrice = accommodation.getPricePerNight() * getNumberOfNights();
+        this.confirmedDate = LocalDate.now().toString();
+        this.totalPrice = calculateTotalPrice(); // ← Use the method!
     }
-    
+
     // Getters
     public int getBookingId() {
         return bookingId;
@@ -98,11 +98,6 @@ public class Booking implements StatusChangeable, Displayable {
         return (int) ChronoUnit.DAYS.between(checkInDate, checkOutDate);
     }
 
-    private double calculateTotalPrice() {
-        if (accommodation == null) return 0.0;
-        return accommodation.getPricePerNight() * getNumberOfNights();
-    }
-   
     @Override
     public boolean canChangeTo(BookingStatus newStatus) {
         if (this.status == BookingStatus.CONFIRMED) {
@@ -117,7 +112,7 @@ public class Booking implements StatusChangeable, Displayable {
 
     @Override
     public void display() {
-        System.out.println("BOOKING DETAILS ");
+        System.out.println("- BOOKING DETAILS -");
         System.out.println("Booking ID: " + bookingId);
         System.out.println("User: " + user.getName());
         System.out.println("Accommodation: " + accommodation.getName());
@@ -132,5 +127,22 @@ public class Booking implements StatusChangeable, Displayable {
     @Override
     public void displayName() {
         System.out.println("Booking #" + bookingId + " - " + user.getName() + " at " + accommodation.getName());
+    }
+
+    // Calculate total price
+    public double calculateTotalPrice() {
+        if (accommodation == null)
+            return 0.0;
+        return accommodation.getPricePerNight() * getNumberOfNights();
+    }
+
+    // Validate that check-out is after check-in
+    public boolean isValidDates() {
+        return checkOutDate.isAfter(checkInDate);
+    }
+
+    // Check if booking is currently active (not cancelled/checked_out)
+    public boolean isActive() {
+        return status == BookingStatus.CONFIRMED || status == BookingStatus.CHECKED_IN;
     }
 }

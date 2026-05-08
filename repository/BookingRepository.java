@@ -64,6 +64,12 @@ public class BookingRepository implements Searchable {
             return;
         }
 
+        // Validate dates using Booking's own method
+        if (!booking.isValidDates()) {
+            System.out.println("[ERROR] Check-out date must be after check-in date!");
+            return;
+        }
+
         if (!isAvailable(booking.getAccommodation().getAccId(),
                 booking.getCheckInDate(),
                 booking.getCheckOutDate())) {
@@ -83,6 +89,8 @@ public class BookingRepository implements Searchable {
             return;
         }
         BookingStatus oldStatus = booking.getStatus();
+
+        // Delegate status validation to Booking class
         if (!booking.canChangeTo(newStatus)) {
             System.out.println("[ERROR] Cannot change booking #" + bookingId +
                     " from " + oldStatus + " to " + newStatus);
@@ -125,40 +133,31 @@ public class BookingRepository implements Searchable {
         return history;
     }
 
-
-    // checking for the availability by using the checkIn and checkOut dates and comfirmed status
+    // AVAILABILITY
     public boolean isAvailable(int accommodationId, String checkIn, String checkOut) {
+        Accommodation acc = findAccommodationById(accommodationId);
+        if (acc == null) {
+            System.out.println("[ERROR] Accommodation ID " + accommodationId + " not found!");
+            return false;
+        }
+
         LocalDate newIn = LocalDate.parse(checkIn);
         LocalDate newOut = LocalDate.parse(checkOut);
 
-        for (Booking b : allBookings.values()) {
-            if (b.getAccommodation().getAccId() == accommodationId) {
-                if (b.getStatus() == BookingStatus.CONFIRMED || b.getStatus() == BookingStatus.CHECKED_IN) {
-                    LocalDate existingIn = LocalDate.parse(b.getCheckInDate());
-                    LocalDate existingOut = LocalDate.parse(b.getCheckOutDate());
-
-                    if (newIn.isBefore(existingOut) && newOut.isAfter(existingIn)) {
-                        System.out.println("[REJECTED] Overlaps with booking #" + b.getBookingId() + "\n");
-                        return false;
-                    }
-                }
-            }
-        }
-        return true;
+        // Business logic is in Accommodation class
+        return acc.isAvailable(newIn, newOut, allBookings.values());
     }
 
-    // check whether the room or accommodation is available
     public List<Accommodation> getAvailableRooms(String checkIn, String checkOut) {
         List<Accommodation> availableResults = new ArrayList<>();
-        
+
         for (Accommodation acc : accommodations) {
-            // reuse your existing isAvailable logic
             if (isAvailable(acc.getAccId(), checkIn, checkOut)) {
                 availableResults.add(acc);
             }
         }
         return availableResults;
-    }       
+    }
 
     // PAYMENT MANAGEMENT
     public void addPayment(Payment payment) {
@@ -166,19 +165,27 @@ public class BookingRepository implements Searchable {
             System.out.println("[ERROR] Payment must be linked to a valid booking!");
             return;
         }
+
+        if (!payment.isValidMethod()) {
+            System.out.println("[ERROR] Invalid payment method: " + payment.getMethod());
+            return;
+        }
+
+        payment.processPayment();
+
         payments.add(payment);
-        System.out.println("[OK] Payment #" + payment.getPaymentId() + " created");
+        System.out.println("[OK] Payment #" + payment.getPaymentId() + " recorded");
     }
 
     public List<Payment> getAllPayments() {
         return new ArrayList<>(payments);
     }
 
-    // COUNT THE TOTAL NUMBER OF BOOKINGS
+    // COUNTS
     public int getTotalBookingsCount() {
         return allBookings.size();
     }
-    // COUNT THE TOTAL NUMBER OF ACCOMMODATIONS
+
     public int getHotelCount() {
         int count = 0;
         for (Accommodation a : accommodations) {
@@ -207,7 +214,6 @@ public class BookingRepository implements Searchable {
     }
 
     // SEARCHABLE INTERFACE IMPLEMENTATION
-
     @Override
     public List<Booking> searchBookingsByUserName(String name) {
         List<Booking> results = new ArrayList<>();
@@ -219,7 +225,6 @@ public class BookingRepository implements Searchable {
         return results;
     }
 
-    // SEARCH BY NAME
     @Override
     public List<Accommodation> searchAccommodationsByName(String name) {
         List<Accommodation> results = new ArrayList<>();
@@ -231,7 +236,6 @@ public class BookingRepository implements Searchable {
         return results;
     }
 
-    // SEARCH BY USER NAME
     @Override
     public List<User> searchUsersByName(String name) {
         List<User> results = new ArrayList<>();
@@ -242,7 +246,7 @@ public class BookingRepository implements Searchable {
         }
         return results;
     }
-    // SEARCH BY DATE RANGE
+
     @Override
     public List<Booking> searchBookingsByDateRange(String startDate, String endDate) {
         List<Booking> results = new ArrayList<>();

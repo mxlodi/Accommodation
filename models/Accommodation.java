@@ -2,6 +2,8 @@ package models;
 
 import interfaces.Displayable;
 import interfaces.Bookable;
+import java.time.LocalDate;
+import java.util.Collection;
 
 public abstract class Accommodation implements Displayable, Bookable {
     private int accId;
@@ -17,12 +19,22 @@ public abstract class Accommodation implements Displayable, Bookable {
     }
 
     // Getters
-    public int getAccId() { return accId; }
-    public String getName() { return name; }
-    
+    public int getAccId() {
+        return accId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
     // Bookable interface methods
-    public double getPricePerNight() { return pricePerNight; }
-    public int getCapacity() { return capacity; }
+    public double getPricePerNight() {
+        return pricePerNight;
+    }
+
+    public int getCapacity() {
+        return capacity;
+    }
 
     // Setters with validation
     public void setName(String name) {
@@ -69,4 +81,21 @@ public abstract class Accommodation implements Displayable, Bookable {
     public void displayName() {
         System.out.println(name);
     }
+
+    public boolean isAvailable(LocalDate checkIn, LocalDate checkOut, Collection<Booking> allBookings) {
+        for (Booking b : allBookings) {
+            if (b.getAccommodation().getAccId() == this.accId) {
+                if (b.isActive()) { 
+                    LocalDate existingIn = LocalDate.parse(b.getCheckInDate());
+                    LocalDate existingOut = LocalDate.parse(b.getCheckOutDate());
+                    if (checkIn.isBefore(existingOut) && checkOut.isAfter(existingIn)) {
+                        System.out.println("[REJECTED] Overlaps with active booking #" + b.getBookingId());
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
 }

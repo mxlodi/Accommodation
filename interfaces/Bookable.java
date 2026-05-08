@@ -1,8 +1,3 @@
-// package interfaces;
-// public interface Bookable {
-//     boolean isAvailable(java.time.LocalDate start, java.time.LocalDate end);
-//     double calculateTotalPrice();
-// }
 
 package interfaces;
 

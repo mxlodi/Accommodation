@@ -62,7 +62,7 @@ public class Apartment extends Accommodation  {
 
     @Override
     public void display() {
-        System.out.println("APARTMENT DETAILS ");
+        System.out.println("- APARTMENT DETAILS -");
         System.out.println("ID: " + getAccId());
         System.out.println("Name: " + getName());
         System.out.println("Floor: " + floor);

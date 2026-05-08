@@ -49,7 +49,7 @@ public class Hotel extends Accommodation {
 
     @Override
     public void display() {
-        System.out.println("HOTEL DETAILS ");
+        System.out.println("- HOTEL DETAILS -");
         System.out.println("ID: " + getAccId());
         System.out.println("Name: " + getName());
         System.out.println("Stars: " + stars + "-star");
