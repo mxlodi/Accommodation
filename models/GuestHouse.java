@@ -1,6 +1,5 @@
 package models;
 
-
 public class GuestHouse extends Accommodation {
     private boolean hasBreakfast;
     private boolean hasElevator;
@@ -9,26 +8,6 @@ public class GuestHouse extends Accommodation {
             boolean hasBreakfast, boolean hasElevator) {
         super(guestHouseId, name, pricePerNight, capacity);
         this.hasBreakfast = hasBreakfast;
-        this.hasElevator = hasElevator;
-    }
-
-    public int getGuestHouseId() {
-        return getAccId();
-    }
-
-    public boolean isHasBreakfast() {
-        return hasBreakfast;
-    }
-
-    public boolean isHasElevator() {
-        return hasElevator;
-    }
-
-    public void setHasBreakfast(boolean hasBreakfast) {
-        this.hasBreakfast = hasBreakfast;
-    }
-
-    public void setHasElevator(boolean hasElevator) {
         this.hasElevator = hasElevator;
     }
 
@@ -43,8 +22,12 @@ public class GuestHouse extends Accommodation {
         System.out.println("ID: " + getAccId());
         System.out.println("Name: " + getName());
         System.out.println("Price: $" + getPricePerNight() + "/night");
-        System.out.println("Capacity: " + getCapacity() + " persons");
         System.out.println("Breakfast: " + (hasBreakfast ? "Yes" : "No"));
-        System.out.println("Elevator: " + (hasElevator ? "Yes" : "No"));
+    }
+
+    // Fixed: Added the missing implementation of displayName()
+    @Override
+    public void displayName() {
+        System.out.println("GuestHouse: " + getName());
     }
 }

@@ -13,89 +13,35 @@ public abstract class Accommodation implements Displayable, Bookable {
 
     public Accommodation(int accId, String name, double pricePerNight, int capacity) {
         this.accId = accId;
-        setName(name);
-        setPricePerNight(pricePerNight);
-        setCapacity(capacity);
+        this.name = name;
+        this.pricePerNight = pricePerNight;
+        this.capacity = capacity;
     }
 
-    // Getters
-    public int getAccId() {
-        return accId;
-    }
+    // Abstract method: Every specific type must identify itself
+    public abstract String getType();
 
-    public String getName() {
-        return name;
-    }
-
-    // Bookable interface methods
-    public double getPricePerNight() {
-        return pricePerNight;
-    }
-
-    public int getCapacity() {
-        return capacity;
-    }
-
-    // Setters with validation
-    public void setName(String name) {
-        if (name == null || name.isEmpty()) {
-            this.name = "Unknown Accommodation";
-        } else {
-            this.name = name;
-        }
-    }
-
-    public void setPricePerNight(double pricePerNight) {
-        if (pricePerNight <= 0) {
-            this.pricePerNight = 50.0;
-        } else {
-            this.pricePerNight = pricePerNight;
-        }
-    }
-
-    public void setCapacity(int capacity) {
-        if (capacity < 1) {
-            this.capacity = 1;
-        } else {
-            this.capacity = capacity;
-        }
-    }
-
-    // calculate the total price
     public double calculatePrice(int nights) {
         return pricePerNight * nights;
     }
 
-    // Abstract method for subclasses
-    public abstract String getType();
+    // Common Getters
+    public int getAccId() { return accId; }
+    public String getName() { return name; }
+    public double getPricePerNight() { return pricePerNight; }
+    public int getCapacity() { return capacity; }
 
-    // Displayable interface methods
-    public void display() {
-        System.out.println("ID: " + accId);
-        System.out.println("Name: " + name);
-        System.out.println("Price: $" + pricePerNight + "/night");
-        System.out.println("Capacity: " + capacity + " persons");
-        System.out.println("Type: " + getType());
-    }
-
-    public void displayName() {
-        System.out.println(name);
-    }
-
+    // Shared business logic: Check if dates overlap with existing bookings
     public boolean isAvailable(LocalDate checkIn, LocalDate checkOut, Collection<Booking> allBookings) {
         for (Booking b : allBookings) {
-            if (b.getAccommodation().getAccId() == this.accId) {
-                if (b.isActive()) { 
-                    LocalDate existingIn = LocalDate.parse(b.getCheckInDate());
-                    LocalDate existingOut = LocalDate.parse(b.getCheckOutDate());
-                    if (checkIn.isBefore(existingOut) && checkOut.isAfter(existingIn)) {
-                        System.out.println("[REJECTED] Overlaps with active booking #" + b.getBookingId());
-                        return false;
-                    }
+            if (b.getAccommodation().getAccId() == this.accId && b.isActive()) {
+                LocalDate existingIn = LocalDate.parse(b.getCheckInDate());
+                LocalDate existingOut = LocalDate.parse(b.getCheckOutDate());
+                if (checkIn.isBefore(existingOut) && checkOut.isAfter(existingIn)) {
+                    return false;
                 }
             }
         }
         return true;
     }
-
 }
